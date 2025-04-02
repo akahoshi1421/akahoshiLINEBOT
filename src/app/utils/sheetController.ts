@@ -111,6 +111,23 @@ export class SheetController {
     return { schedule, participantsStringArray };
   }
 
+  public static getParticipants(eventName: string) {
+    const participants = gassma.sheets.参加者.findMany({
+      where: {
+        イベント名: eventName,
+      },
+      select: {
+        参加者名: true,
+      },
+    });
+
+    const participantsStringArray = participants.map(
+      (participant) => participant.参加者名
+    );
+
+    return participantsStringArray;
+  }
+
   public static getAllData() {
     const schedule = gassma.sheets.スケジュール一覧.findMany({});
     return schedule;

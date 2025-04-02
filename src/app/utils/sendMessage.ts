@@ -1,5 +1,7 @@
 import type { Gassmaスケジュール一覧CreateReturn } from "gassma";
 import type { NewSchedule } from "../types/schema";
+import { NotifySchedule } from "../types/lineMessageData";
+import { getOneNotifyScheduleMessage } from "./getOneNotifyScheduleMessage";
 
 export class SendMessageController {
   private readonly URL: string = "https://api.line.me/v2/bot/message/push";
@@ -161,6 +163,52 @@ ${remarks ? "備考: " + remarks : ""}
       to: this.groupId,
       messages: [{ type: "text", text: message }],
     };
+
+    const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
+      method: "post",
+      headers: headers,
+      payload: JSON.stringify(postData),
+    };
+
+    UrlFetchApp.fetch(this.URL, options);
+  }
+
+  public notifyScheduleMessage(
+    twoWeeksSchedulesAll: NotifySchedule[],
+    oneWeekSchedulesAll: NotifySchedule[],
+    threeDaysSchedulesAll: NotifySchedule[],
+    oneDaySchedulesAll: NotifySchedule[]
+  ) {
+    const twoWeeksSchedulesMessages = getOneNotifyScheduleMessage(
+      twoWeeksSchedulesAll,
+      "2週間前"
+    );
+    const oneWeekSchedulesMessages = getOneNotifyScheduleMessage(
+      oneWeekSchedulesAll,
+      "1週間前"
+    );
+    const threeDaysSchedulesMessages = getOneNotifyScheduleMessage(
+      threeDaysSchedulesAll,
+      "3日前"
+    );
+    const oneDaySchedulesMessages = getOneNotifyScheduleMessage(
+      oneDaySchedulesAll,
+      "1日前"
+    );
+
+    const headers = this.getHeaders();
+
+    const postData = {
+      to: this.groupId,
+      messages: [
+        { type: "text", text: twoWeeksSchedulesMessages },
+        { type: "text", text: oneWeekSchedulesMessages },
+        { type: "text", text: threeDaysSchedulesMessages },
+        { type: "text", text: oneDaySchedulesMessages },
+      ].filter((oneMessage) => oneMessage.text !== ""),
+    };
+
+    if (postData.messages.length === 0) return;
 
     const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
       method: "post",
