@@ -12,8 +12,8 @@ export function doPost(e: GoogleAppsScript.Events.DoPost) {
 
 export function testFunc() {
   const hoge = {
-    various: "登録",
-    eventName: "テスト",
+    various: "",
+    eventName: "",
     eventDate: new Date("2025/4/10 10:00"),
     participants: "あかほし",
   };

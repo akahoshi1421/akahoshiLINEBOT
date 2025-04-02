@@ -6,9 +6,10 @@ import {
   variousSchema,
 } from "./commonSchema";
 
-export const newScheduleSchema = z.object({
+export const changeScheduleSchema = z.object({
   various: variousSchema,
   eventName: eventNameSchema,
   eventDate: eventDateSchema,
-  participants: participantsSchema,
+  participantAdd: participantsSchema,
+  participantRemove: participantsSchema,
 });
