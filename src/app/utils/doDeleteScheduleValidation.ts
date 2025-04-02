@@ -17,6 +17,9 @@ export const doDeleteScheduleValidation = (arrayData: string[][]) => {
 
     return false;
   }
+  const willDeleteData = SheetController.getData(
+    deleteScheduleSchemaData.eventName
+  );
 
   SheetController.deleteSchedule(deleteScheduleSchemaData);
 

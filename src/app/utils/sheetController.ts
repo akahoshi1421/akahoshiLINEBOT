@@ -87,4 +87,27 @@ export class SheetController {
       },
     });
   }
+
+  public static getData(eventName: string) {
+    const schedule = gassma.sheets.スケジュール一覧.findFirst({
+      where: {
+        イベント名: eventName,
+      },
+    });
+
+    const participants = gassma.sheets.参加者.findMany({
+      where: {
+        イベント名: eventName,
+      },
+      select: {
+        参加者名: true,
+      },
+    });
+
+    const participantsStringArray = participants.map(
+      (participant) => participant.参加者名
+    );
+
+    return { schedule, participantsStringArray };
+  }
 }
