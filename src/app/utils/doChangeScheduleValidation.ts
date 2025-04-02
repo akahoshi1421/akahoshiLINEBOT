@@ -1,13 +1,14 @@
 import { changeScheduleSchema } from "../schema/changeScheduleSchema";
 import { getKeyData } from "./getKeyData";
+import { SheetController } from "./sheetController";
 
 export const doChangeScheduleValidation = (arrayData: string[][]) => {
   const changeScheduleSchemaData = {
-    ...getKeyData(arrayData, "eventName", ""),
-    ...getKeyData(arrayData, "eventDate", null),
-    ...getKeyData(arrayData, "participantAdd", null),
-    ...getKeyData(arrayData, "participantRemove", null),
-    ...getKeyData(arrayData, "remarks", null),
+    ...getKeyData(arrayData, "eventName", "", false),
+    ...getKeyData(arrayData, "eventDate", null, true),
+    ...getKeyData(arrayData, "participantAdd", null, false),
+    ...getKeyData(arrayData, "participantRemove", null, false),
+    ...getKeyData(arrayData, "remarks", null, false),
   };
 
   const changeScheduleSchemaResult = changeScheduleSchema.safeParse(
@@ -20,6 +21,8 @@ export const doChangeScheduleValidation = (arrayData: string[][]) => {
 
     return false;
   }
+
+  SheetController.changeSchedule(changeScheduleSchemaData);
 
   return true;
 };

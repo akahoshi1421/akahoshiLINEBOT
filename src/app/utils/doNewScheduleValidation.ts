@@ -1,12 +1,13 @@
 import { newScheduleSchema } from "../schema/newScheduleSchema";
 import { getKeyData } from "./getKeyData";
+import { SheetController } from "./sheetController";
 
 export const doNewScheduleValidation = (arrayData: string[][]) => {
   const newShceduleSchemaData = {
-    ...getKeyData(arrayData, "eventName", ""),
-    ...getKeyData(arrayData, "eventData", null),
-    ...getKeyData(arrayData, "participants", null),
-    ...getKeyData(arrayData, "remarks", null),
+    ...getKeyData(arrayData, "eventName", "", false),
+    ...getKeyData(arrayData, "eventDate", null, true),
+    ...getKeyData(arrayData, "participants", null, false),
+    ...getKeyData(arrayData, "remarks", null, false),
   };
 
   const newShceduleSchemaResult = newScheduleSchema.safeParse(
@@ -19,6 +20,8 @@ export const doNewScheduleValidation = (arrayData: string[][]) => {
 
     return false;
   }
+
+  SheetController.addSchedule(newShceduleSchemaData);
 
   return true;
 };

@@ -1,9 +1,10 @@
 import { deleteScheduleSchema } from "../schema/deleteScheduleSchema";
 import { getKeyData } from "./getKeyData";
+import { SheetController } from "./sheetController";
 
 export const doDeleteScheduleValidation = (arrayData: string[][]) => {
   const deleteScheduleSchemaData = {
-    ...getKeyData(arrayData, "eventName", ""),
+    ...getKeyData(arrayData, "eventName", "", false),
   };
 
   const deleteScheduleSchemaResult = deleteScheduleSchema.safeParse(
@@ -16,6 +17,8 @@ export const doDeleteScheduleValidation = (arrayData: string[][]) => {
 
     return false;
   }
+
+  SheetController.deleteSchedule(deleteScheduleSchemaData);
 
   return true;
 };
