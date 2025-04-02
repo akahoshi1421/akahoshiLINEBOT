@@ -33,7 +33,46 @@ export class SheetController {
     });
   }
 
-  public static changeSchedule(data: ChangeSchedule) {}
+  public static changeSchedule(data: ChangeSchedule) {
+    gassma.sheets.スケジュール一覧.updateMany({
+      where: {
+        イベント名: data.eventName,
+      },
+      data: {
+        イベント名: data.eventName,
+        集合時間: data.eventDate || undefined,
+        備考: data.remarks || undefined,
+      },
+    });
+
+    if (data.participantAdd) {
+      const participantsArray = data.participantAdd
+        .split(",")
+        .map((participant) => {
+          return {
+            イベント名: data.eventName,
+            参加者名: participant,
+          };
+        });
+
+      gassma.sheets.参加者.createMany({
+        data: participantsArray,
+      });
+    }
+
+    if (data.participantRemove) {
+      const participantsArray = data.participantRemove.split(",");
+
+      gassma.sheets.参加者.deleteMany({
+        where: {
+          イベント名: data.eventName,
+          参加者名: {
+            in: participantsArray,
+          },
+        },
+      });
+    }
+  }
 
   public static deleteSchedule(data: DeleteSchedule) {}
 }
