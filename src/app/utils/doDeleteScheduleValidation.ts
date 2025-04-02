@@ -1,5 +1,6 @@
 import { deleteScheduleSchema } from "../schema/deleteScheduleSchema";
 import { getKeyData } from "./getKeyData";
+import { SendMessageController } from "./sendMessage";
 import { SheetController } from "./sheetController";
 
 export const doDeleteScheduleValidation = (arrayData: string[][]) => {
@@ -17,11 +18,14 @@ export const doDeleteScheduleValidation = (arrayData: string[][]) => {
 
     return false;
   }
-  const willDeleteData = SheetController.getData(
+  const { schedule, participantsStringArray } = SheetController.getData(
     deleteScheduleSchemaData.eventName
   );
 
   SheetController.deleteSchedule(deleteScheduleSchemaData);
+
+  const sendMessageController = new SendMessageController();
+  sendMessageController.deleteMessage(schedule, participantsStringArray);
 
   return true;
 };
