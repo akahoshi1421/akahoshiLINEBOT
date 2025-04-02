@@ -1,13 +1,20 @@
 import { newScheduleSchema } from "./schema/newScheduleSchema";
 import type { LineMessageData } from "./types/lineMessageData";
+import { doVariousValidation } from "./utils/changeToAbleValidationData";
+import { changeToArrayData } from "./utils/changeToArrayData";
 
 export function doPost(e: GoogleAppsScript.Events.DoPost) {
   const messageData: LineMessageData = JSON.parse(e.postData.contents);
   const eventText = messageData.events[0]?.message.text || "";
 
-  const isMatch = eventText.match(/^あかほしBOT:/);
+  const isMatch = eventText.match(/^あかほしBOT:\n/);
 
   if (!isMatch) return;
+
+  const changedArrayData = changeToArrayData(eventText.split("\n"));
+  const isSuccessVariousValidation = doVariousValidation(changedArrayData);
+
+  if (!isSuccessVariousValidation) return;
 }
 
 export function testFunc() {
@@ -18,6 +25,6 @@ export function testFunc() {
     participants: "あかほし",
   };
 
-  const data = newScheduleSchema.parse(hoge);
-  console.log(data);
+  const data = newScheduleSchema.safeParse(hoge);
+  console.log(data.error?.errors[0]);
 }
