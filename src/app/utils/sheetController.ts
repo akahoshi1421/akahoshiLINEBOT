@@ -110,4 +110,9 @@ export class SheetController {
 
     return { schedule, participantsStringArray };
   }
+
+  public static getAllData() {
+    const schedule = gassma.sheets.スケジュール一覧.findMany({});
+    return schedule;
+  }
 }
