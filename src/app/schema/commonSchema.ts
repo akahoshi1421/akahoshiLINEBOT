@@ -1,9 +1,5 @@
 import { z } from "zod";
 
-export const variousSchema = z.string().regex(/^(登録|変更|削除)$/, {
-  message: "種類は「登録」、「変更」、「削除」いずれかです",
-});
-
 export const eventNameSchema = z
   .string()
   .min(1, { message: "イベント名は必須です" });
