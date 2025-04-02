@@ -6,6 +6,7 @@ export const doNewScheduleValidation = (arrayData: string[][]) => {
     ...getKeyData(arrayData, "eventName", ""),
     ...getKeyData(arrayData, "eventData", null),
     ...getKeyData(arrayData, "participants", null),
+    ...getKeyData(arrayData, "remarks", null),
   };
 
   const newShceduleSchemaResult = newScheduleSchema.safeParse(

@@ -3,6 +3,7 @@ import {
   eventDateSchema,
   eventNameSchema,
   participantsSchema,
+  remarksSchema,
 } from "./commonSchema";
 
 export const changeScheduleSchema = z.object({
@@ -10,4 +11,5 @@ export const changeScheduleSchema = z.object({
   eventDate: eventDateSchema,
   participantAdd: participantsSchema,
   participantRemove: participantsSchema,
+  remarks: remarksSchema,
 });

@@ -16,3 +16,5 @@ export const eventDateSchema = z
   .nullable();
 
 export const participantsSchema = z.string().nullable();
+
+export const remarksSchema = z.string().nullable();

@@ -7,6 +7,7 @@ export const doChangeScheduleValidation = (arrayData: string[][]) => {
     ...getKeyData(arrayData, "eventDate", null),
     ...getKeyData(arrayData, "participantAdd", null),
     ...getKeyData(arrayData, "participantRemove", null),
+    ...getKeyData(arrayData, "remarks", null),
   };
 
   const changeScheduleSchemaResult = changeScheduleSchema.safeParse(
