@@ -1,6 +1,7 @@
 import { variousSchema } from "../schema/variousSchema";
+import { doNewScheduleValidation } from "./doNewScheduleValidation";
 
-export const doVariousValidation = (arrayData: string[][]) => {
+export const doValidation = (arrayData: string[][]) => {
   const validationVarious = arrayData.find(
     (oneArrayData) => oneArrayData[0] === "various"
   );
@@ -8,7 +9,7 @@ export const doVariousValidation = (arrayData: string[][]) => {
   if (!validationVarious) return false;
 
   const variousSchemaResult = variousSchema.safeParse({
-    various: validationVarious[0],
+    various: validationVarious[1],
   });
 
   if (!variousSchemaResult.success) {
@@ -16,6 +17,11 @@ export const doVariousValidation = (arrayData: string[][]) => {
     const errorMessages = errors.map((error) => error.message);
 
     return false;
+  }
+
+  switch (validationVarious[1]) {
+    case "登録":
+      return doNewScheduleValidation(arrayData);
   }
 
   return true;

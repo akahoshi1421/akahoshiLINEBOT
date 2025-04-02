@@ -1,6 +1,6 @@
 import { newScheduleSchema } from "./schema/newScheduleSchema";
 import type { LineMessageData } from "./types/lineMessageData";
-import { doVariousValidation } from "./utils/changeToAbleValidationData";
+import { doValidation } from "./utils/doValidation";
 import { changeToArrayData } from "./utils/changeToArrayData";
 
 export function doPost(e: GoogleAppsScript.Events.DoPost) {
@@ -12,7 +12,7 @@ export function doPost(e: GoogleAppsScript.Events.DoPost) {
   if (!isMatch) return;
 
   const changedArrayData = changeToArrayData(eventText.split("\n"));
-  const isSuccessVariousValidation = doVariousValidation(changedArrayData);
+  const isSuccessVariousValidation = doValidation(changedArrayData);
 
   if (!isSuccessVariousValidation) return;
 }
