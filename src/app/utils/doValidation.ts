@@ -1,4 +1,6 @@
 import { variousSchema } from "../schema/variousSchema";
+import { doChangeScheduleValidation } from "./doChangeScheduleValidation";
+import { doDeleteScheduleValidation } from "./doDeleteScheduleValidation";
 import { doNewScheduleValidation } from "./doNewScheduleValidation";
 
 export const doValidation = (arrayData: string[][]) => {
@@ -22,6 +24,10 @@ export const doValidation = (arrayData: string[][]) => {
   switch (validationVarious[1]) {
     case "登録":
       return doNewScheduleValidation(arrayData);
+    case "変更":
+      return doChangeScheduleValidation(arrayData);
+    case "削除":
+      return doDeleteScheduleValidation(arrayData);
   }
 
   return true;
