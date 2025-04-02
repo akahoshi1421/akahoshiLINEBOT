@@ -74,5 +74,17 @@ export class SheetController {
     }
   }
 
-  public static deleteSchedule(data: DeleteSchedule) {}
+  public static deleteSchedule(data: DeleteSchedule) {
+    gassma.sheets.スケジュール一覧.deleteMany({
+      where: {
+        イベント名: data.eventName,
+      },
+    });
+
+    gassma.sheets.参加者.deleteMany({
+      where: {
+        イベント名: data.eventName,
+      },
+    });
+  }
 }
