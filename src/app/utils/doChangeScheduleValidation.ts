@@ -1,5 +1,6 @@
 import { changeScheduleSchema } from "../schema/changeScheduleSchema";
 import { getKeyData } from "./getKeyData";
+import { SendMessageController } from "./sendMessage";
 import { SheetController } from "./sheetController";
 
 export const doChangeScheduleValidation = (arrayData: string[][]) => {
@@ -21,8 +22,24 @@ export const doChangeScheduleValidation = (arrayData: string[][]) => {
 
     return false;
   }
+  const {
+    schedule: preSchedule,
+    participantsStringArray: preParticipantsStringArray,
+  } = SheetController.getData(changeScheduleSchemaData.eventName);
 
   SheetController.changeSchedule(changeScheduleSchemaData);
+
+  const { schedule, participantsStringArray } = SheetController.getData(
+    changeScheduleSchemaData.eventName
+  );
+
+  const sendMessageController = new SendMessageController();
+  sendMessageController.changeMessage(
+    preSchedule,
+    preParticipantsStringArray,
+    schedule,
+    participantsStringArray
+  );
 
   return true;
 };
