@@ -28,7 +28,7 @@ export const doValidation = (arrayData: string[][]) => {
       return doChangeScheduleValidation(arrayData);
     case "削除":
       return doDeleteScheduleValidation(arrayData);
+    default:
+      return false;
   }
-
-  return true;
 };
