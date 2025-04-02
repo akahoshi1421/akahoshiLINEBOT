@@ -1,5 +1,6 @@
 import { newScheduleSchema } from "../schema/newScheduleSchema";
 import { getKeyData } from "./getKeyData";
+import { SendMessageController } from "./sendMessage";
 import { SheetController } from "./sheetController";
 
 export const doNewScheduleValidation = (arrayData: string[][]) => {
@@ -22,6 +23,9 @@ export const doNewScheduleValidation = (arrayData: string[][]) => {
   }
 
   SheetController.addSchedule(newShceduleSchemaData);
+
+  const sendMessageController = new SendMessageController();
+  sendMessageController.newMessage(newShceduleSchemaData);
 
   return true;
 };
