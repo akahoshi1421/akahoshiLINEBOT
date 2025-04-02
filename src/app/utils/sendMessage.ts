@@ -1,4 +1,5 @@
 import type { Gassmaスケジュール一覧CreateReturn } from "gassma";
+import type { NewSchedule } from "../types/schema";
 
 export class SendMessageController {
   private readonly URL: string = "https://api.line.me/v2/bot/message/push";
@@ -27,6 +28,38 @@ export class SendMessageController {
     const postData = {
       to: this.groupId,
       messages: [{ type: "text", text: messages.join("\n") }],
+    };
+
+    const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
+      method: "post",
+      headers: headers,
+      payload: JSON.stringify(postData),
+    };
+
+    UrlFetchApp.fetch(this.URL, options);
+  }
+
+  public newMessage(data: NewSchedule) {
+    const { eventName, eventDate, remarks, participants } = data;
+
+    const message = `
+以下のスケジュールを作成しました。
+
+イベント名: ${eventName}
+${
+  eventDate
+    ? "集合時間: " + Utilities.formatDate(eventDate, "JST", "yyyy-MM-dd HH:mm")
+    : ""
+}
+${participants ? "参加者: " + participants : ""}
+${remarks ? "備考: " + remarks : ""}
+`;
+
+    const headers = this.getHeaders();
+
+    const postData = {
+      to: this.groupId,
+      messages: [{ type: "text", text: message }],
     };
 
     const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
@@ -67,8 +100,8 @@ ${
       Utilities.formatDate(preEventDate, "JST", "yyyy-MM-dd HH:mm")
     : ""
 }
-  ${preParticipants.length ? "参加者: " + preParticipants.join(",") : ""}
-  ${preRemarks ? "備考: " + preRemarks : ""}
+${preParticipants.length ? "参加者: " + preParticipants.join(",") : ""}
+${preRemarks ? "備考: " + preRemarks : ""}
 
 =================================
 
