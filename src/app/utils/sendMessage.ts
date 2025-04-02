@@ -1,3 +1,5 @@
+import type { Gassmaスケジュール一覧CreateReturn } from "gassma";
+
 export class SendMessageController {
   private readonly URL: string = "https://api.line.me/v2/bot/message/push";
   private readonly accessToken: string;
@@ -25,6 +27,45 @@ export class SendMessageController {
     const postData = {
       to: this.groupId,
       messages: [{ type: "text", text: messages.join("\n") }],
+    };
+
+    const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
+      method: "post",
+      headers: headers,
+      payload: JSON.stringify(postData),
+    };
+
+    UrlFetchApp.fetch(this.URL, options);
+  }
+
+  public deleteMessage(
+    schedule: Gassmaスケジュール一覧CreateReturn,
+    participants: string[]
+  ) {
+    const {
+      イベント名: eventName,
+      集合時間: eventDate,
+      備考: remarks,
+    } = schedule;
+
+    const message = `
+以下のスケジュールを削除しました。
+
+イベント名: ${eventName}
+${
+  eventDate
+    ? "集合時間: " + Utilities.formatDate(eventDate, "JST", "yyyy-MM-dd HH:mm")
+    : ""
+}
+${participants.length ? "参加者: " + participants.join(",") : ""}
+${remarks ? "備考: " + remarks : ""}
+`;
+
+    const headers = this.getHeaders();
+
+    const postData = {
+      to: this.groupId,
+      messages: [{ type: "text", text: message }],
     };
 
     const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
