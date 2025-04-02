@@ -2,6 +2,7 @@
 
 import type { NotifySchedule } from "./types/lineMessageData";
 import { getScheduleFilter } from "./utils/scheduleFilter";
+import { SendMessageController } from "./utils/sendMessage";
 import { SheetController } from "./utils/sheetController";
 
 export function notify() {
@@ -33,5 +34,13 @@ export function notify() {
       const participants = SheetController.getParticipants(schedule.イベント名);
       return { schedule, participants };
     }
+  );
+
+  const sendMessageController = new SendMessageController();
+  sendMessageController.notifyScheduleMessage(
+    twoWeeksSchedulesAll,
+    oneWeekSchedulesAll,
+    threeDaysSchedulesAll,
+    oneDaySchedulesAll
   );
 }
