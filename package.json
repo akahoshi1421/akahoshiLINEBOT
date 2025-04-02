@@ -17,6 +17,7 @@
     "@types/google-apps-script": "^1.0.97",
     "babel-loader": "^10.0.0",
     "gas-webpack-plugin": "^2.6.0",
+    "gassma": "^0.9.2",
     "webpack": "^5.98.0",
     "webpack-cli": "^6.0.1",
     "zod": "^3.24.2"

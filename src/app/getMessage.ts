@@ -12,9 +12,9 @@ export function doPost(e: GoogleAppsScript.Events.DoPost) {
   if (!isMatch) return;
 
   const changedArrayData = changeToArrayData(eventText.split("\n"));
-  const isSuccessVariousValidation = doValidation(changedArrayData);
+  const isSuccessValidation = doValidation(changedArrayData);
 
-  if (!isSuccessVariousValidation) return;
+  if (!isSuccessValidation) return;
 }
 
 export function testFunc() {
