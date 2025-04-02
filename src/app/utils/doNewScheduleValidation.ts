@@ -18,6 +18,8 @@ export const doNewScheduleValidation = (arrayData: string[][]) => {
   if (!newShceduleSchemaResult.success) {
     const errors = newShceduleSchemaResult.error.errors;
     const errorMessages = errors.map((error) => error.message);
+    const sendMessageControllerError = new SendMessageController();
+    sendMessageControllerError.sendErrorMessage(errorMessages);
 
     return false;
   }

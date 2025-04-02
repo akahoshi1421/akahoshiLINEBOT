@@ -19,6 +19,8 @@ export const doChangeScheduleValidation = (arrayData: string[][]) => {
   if (!changeScheduleSchemaResult.success) {
     const errors = changeScheduleSchemaResult.error.errors;
     const errorMessages = errors.map((error) => error.message);
+    const sendMessageControllerError = new SendMessageController();
+    sendMessageControllerError.sendErrorMessage(errorMessages);
 
     return false;
   }

@@ -15,6 +15,8 @@ export const doDeleteScheduleValidation = (arrayData: string[][]) => {
   if (!deleteScheduleSchemaResult.success) {
     const errors = deleteScheduleSchemaResult.error.errors;
     const errorMessages = errors.map((error) => error.message);
+    const sendMessageControllerError = new SendMessageController();
+    sendMessageControllerError.sendErrorMessage(errorMessages);
 
     return false;
   }
