@@ -22,7 +22,7 @@ ${messageCreate.getEventNameMessage(eventName)}${messageCreate.getDateMessage(
       )}${messageCreate.getParticipantsMessage(
         schedule.participants
       )}${messageCreate.getRemakrsMessage(remarks)}
-  `
+`
     );
   }, `以下のスケジュールが${ago}です\n`);
 
