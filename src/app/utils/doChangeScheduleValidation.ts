@@ -36,6 +36,11 @@ export const doChangeScheduleValidation = (arrayData: string[][]) => {
   );
 
   const sendMessageController = new SendMessageController();
+  if (!schedule) {
+    sendMessageController.sendErrorMessage(["該当のスケジュールがありません"]);
+    return false;
+  }
+
   sendMessageController.changeMessage(
     preSchedule,
     preParticipantsStringArray,

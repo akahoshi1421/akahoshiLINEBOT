@@ -24,9 +24,13 @@ export const doDeleteScheduleValidation = (arrayData: string[][]) => {
     deleteScheduleSchemaData.eventName
   );
 
-  SheetController.deleteSchedule(deleteScheduleSchemaData);
-
   const sendMessageController = new SendMessageController();
+  if (!schedule) {
+    sendMessageController.sendErrorMessage(["該当のスケジュールがありません"]);
+    return false;
+  }
+
+  SheetController.deleteSchedule(deleteScheduleSchemaData);
   sendMessageController.deleteMessage(schedule, participantsStringArray);
 
   return true;
