@@ -139,9 +139,16 @@ export class SheetController {
   public static getAllFutureScheduleData() {
     const schedule = gassma.sheets.スケジュール一覧.findMany({
       where: {
-        集合時間: {
-          gte: new Date(),
-        },
+        OR: [
+          {
+            集合時間: {
+              gte: new Date(),
+            },
+          },
+          {
+            集合時間: null,
+          },
+        ],
       },
     });
     return schedule;
