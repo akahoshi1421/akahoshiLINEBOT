@@ -1,4 +1,4 @@
-import { Gassma } from "../types/gassma";
+import { Gassma, type Gassmaスケジュール一覧UpdateData } from "../types/gassma";
 import type {
   ChangeSchedule,
   DeleteSchedule,
@@ -34,16 +34,19 @@ export class SheetController {
   }
 
   public static changeSchedule(data: ChangeSchedule) {
-    gassma.sheets.スケジュール一覧.updateMany({
+    const updateManyData: Gassmaスケジュール一覧UpdateData = {
       where: {
         イベント名: data.eventName,
       },
       data: {
         イベント名: data.eventName,
-        集合時間: data.eventDate || undefined,
-        備考: data.remarks || undefined,
       },
-    });
+    };
+
+    if (data.eventDate) updateManyData.data["集合時間"] = data.eventDate;
+    if (data.remarks) updateManyData.data["備考"] = data.remarks;
+
+    gassma.sheets.スケジュール一覧.updateMany(updateManyData);
 
     if (data.participantAdd) {
       const participantsArray = data.participantAdd

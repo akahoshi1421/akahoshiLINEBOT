@@ -104,7 +104,7 @@ ${this.messageCreate.getEventNameMessage(
       preParticipants
     )}${this.messageCreate.getRemakrsMessage(preRemarks)}
 
-=================================
+↓↓↓
 
 変更後:
 ${this.messageCreate.getEventNameMessage(

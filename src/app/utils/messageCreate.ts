@@ -18,6 +18,6 @@ export class MessageCreate {
   }
 
   public getRemakrsMessage(remarks: string | null) {
-    return remarks ? `備考: ${remarks}\n` : "";
+    return remarks ? `備考: ${remarks}` : "";
   }
 }
