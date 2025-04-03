@@ -2,6 +2,7 @@ import { variousSchema } from "../schema/variousSchema";
 import { doChangeScheduleValidation } from "./doChangeScheduleValidation";
 import { doDeleteScheduleValidation } from "./doDeleteScheduleValidation";
 import { doNewScheduleValidation } from "./doNewScheduleValidation";
+import { SendMessageController } from "./sendMessage";
 
 export const doValidation = (arrayData: string[][]) => {
   const validationVarious = arrayData.find(
@@ -17,6 +18,8 @@ export const doValidation = (arrayData: string[][]) => {
   if (!variousSchemaResult.success) {
     const errors = variousSchemaResult.error.errors;
     const errorMessages = errors.map((error) => error.message);
+    const sendMessageControllerError = new SendMessageController();
+    sendMessageControllerError.sendErrorMessage(errorMessages);
 
     return false;
   }
