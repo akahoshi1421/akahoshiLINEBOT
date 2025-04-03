@@ -1,6 +1,7 @@
 import { variousSchema } from "../schema/variousSchema";
 import { doChangeScheduleValidation } from "./doChangeScheduleValidation";
 import { doDeleteScheduleValidation } from "./doDeleteScheduleValidation";
+import { doGetAndSendSchedules } from "./doGetAndSendSchedules";
 import { doNewScheduleValidation } from "./doNewScheduleValidation";
 import { SendMessageController } from "./sendMessage";
 
@@ -32,7 +33,7 @@ export const doValidation = (arrayData: string[][]) => {
     case "削除":
       return doDeleteScheduleValidation(arrayData);
     case "取得":
-      return false;
+      return doGetAndSendSchedules();
     default:
       return false;
   }
