@@ -3,6 +3,7 @@ import type { NewSchedule } from "../types/schema";
 import { NotifySchedule } from "../types/lineMessageData";
 import { getOneNotifyScheduleMessage } from "./getOneNotifyScheduleMessage";
 import { MessageCreate } from "./messageCreate";
+import { getAllInOneNotifyScheduleMessage } from "./getAllInOneNotifyScheduleMessage";
 
 export class SendMessageController {
   private readonly LINE_URL: string;
@@ -205,6 +206,25 @@ ${this.messageCreate.getEventNameMessage(
     };
 
     if (postData.messages.length === 0) return;
+
+    const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
+      method: "post",
+      headers: headers,
+      payload: JSON.stringify(postData),
+    };
+
+    UrlFetchApp.fetch(this.LINE_URL, options);
+  }
+
+  public notifySchedules(schedules: NotifySchedule[]) {
+    const message = getAllInOneNotifyScheduleMessage(schedules);
+
+    const headers = this.getHeaders();
+
+    const postData = {
+      to: this.groupId,
+      messages: [{ type: "text", text: message }],
+    };
 
     const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
       method: "post",

@@ -31,6 +31,8 @@ export const doValidation = (arrayData: string[][]) => {
       return doChangeScheduleValidation(arrayData);
     case "削除":
       return doDeleteScheduleValidation(arrayData);
+    case "取得":
+      return false;
     default:
       return false;
   }
