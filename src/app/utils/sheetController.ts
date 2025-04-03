@@ -1,4 +1,4 @@
-import { Gassma } from "gassma";
+import { Gassma } from "../types/gassma";
 import type {
   ChangeSchedule,
   DeleteSchedule,

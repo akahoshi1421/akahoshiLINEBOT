@@ -4,11 +4,12 @@ import { NotifySchedule } from "../types/lineMessageData";
 import { getOneNotifyScheduleMessage } from "./getOneNotifyScheduleMessage";
 
 export class SendMessageController {
-  private readonly URL: string = "https://api.line.me/v2/bot/message/push";
+  private readonly LINE_URL: string;
   private readonly accessToken: string;
   private readonly groupId: string;
 
   constructor() {
+    this.LINE_URL = "https://api.line.me/v2/bot/message/push";
     this.accessToken =
       PropertiesService.getScriptProperties().getProperty(
         "CHANNEL_ACCESS_TOKEN"
@@ -38,7 +39,7 @@ export class SendMessageController {
       payload: JSON.stringify(postData),
     };
 
-    UrlFetchApp.fetch(this.URL, options);
+    UrlFetchApp.fetch(this.LINE_URL, options);
   }
 
   public newMessage(data: NewSchedule) {
@@ -70,7 +71,7 @@ ${remarks ? "備考: " + remarks : ""}
       payload: JSON.stringify(postData),
     };
 
-    UrlFetchApp.fetch(this.URL, options);
+    UrlFetchApp.fetch(this.LINE_URL, options);
   }
 
   public changeMessage(
@@ -131,7 +132,7 @@ ${remarks ? "備考: " + remarks : ""}
       payload: JSON.stringify(postData),
     };
 
-    UrlFetchApp.fetch(this.URL, options);
+    UrlFetchApp.fetch(this.LINE_URL, options);
   }
 
   public deleteMessage(
@@ -170,7 +171,7 @@ ${remarks ? "備考: " + remarks : ""}
       payload: JSON.stringify(postData),
     };
 
-    UrlFetchApp.fetch(this.URL, options);
+    UrlFetchApp.fetch(this.LINE_URL, options);
   }
 
   public notifyScheduleMessage(
@@ -216,6 +217,6 @@ ${remarks ? "備考: " + remarks : ""}
       payload: JSON.stringify(postData),
     };
 
-    UrlFetchApp.fetch(this.URL, options);
+    UrlFetchApp.fetch(this.LINE_URL, options);
   }
 }
