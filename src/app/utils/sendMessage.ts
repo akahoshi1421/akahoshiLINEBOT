@@ -48,8 +48,7 @@ export class SendMessageController {
   public newMessage(data: NewSchedule) {
     const { eventName, eventDate, remarks, participants } = data;
 
-    const message = `
-以下のスケジュールを作成しました。
+    const message = `以下のスケジュールを作成しました。
 
 ${this.messageCreate.getEventNameMessage(
   eventName
@@ -94,8 +93,7 @@ ${this.messageCreate.getEventNameMessage(
       備考: remarks,
     } = schedule;
 
-    const message = `
-以下のスケジュールを変更しました。
+    const message = `以下のスケジュールを変更しました。
 
 変更前:
 ${this.messageCreate.getEventNameMessage(
@@ -144,8 +142,7 @@ ${this.messageCreate.getEventNameMessage(
       備考: remarks,
     } = schedule;
 
-    const message = `
-以下のスケジュールを削除しました。
+    const message = `以下のスケジュールを削除しました。
 
 ${this.messageCreate.getEventNameMessage(
   eventName
