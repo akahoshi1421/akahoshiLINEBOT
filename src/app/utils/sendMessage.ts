@@ -2,11 +2,13 @@ import type { Gassmaスケジュール一覧CreateReturn } from "gassma";
 import type { NewSchedule } from "../types/schema";
 import { NotifySchedule } from "../types/lineMessageData";
 import { getOneNotifyScheduleMessage } from "./getOneNotifyScheduleMessage";
+import { MessageCreate } from "./messageCreate";
 
 export class SendMessageController {
   private readonly LINE_URL: string;
   private readonly accessToken: string;
   private readonly groupId: string;
+  private readonly messageCreate: MessageCreate;
 
   constructor() {
     this.LINE_URL = "https://api.line.me/v2/bot/message/push";
@@ -16,6 +18,7 @@ export class SendMessageController {
       ) || "";
     this.groupId =
       PropertiesService.getScriptProperties().getProperty("GROUP_ID") || "";
+    this.messageCreate = new MessageCreate();
   }
 
   private getHeaders() {
@@ -48,14 +51,10 @@ export class SendMessageController {
     const message = `
 以下のスケジュールを作成しました。
 
-イベント名: ${eventName}
-${
-  eventDate
-    ? "集合時間: " + Utilities.formatDate(eventDate, "JST", "yyyy-MM-dd HH:mm")
-    : ""
-}
-${participants ? "参加者: " + participants : ""}
-${remarks ? "備考: " + remarks : ""}
+${this.messageCreate.getEventNameMessage(eventName)}
+${this.messageCreate.getDateMessage(eventDate)}
+${this.messageCreate.getParticipantsStringMessage(participants)}
+${this.messageCreate.getRemakrsMessage(remarks)}
 `;
 
     const headers = this.getHeaders();
@@ -96,27 +95,24 @@ ${remarks ? "備考: " + remarks : ""}
 以下のスケジュールを変更しました。
 
 変更前:
-イベント名: ${preEventName}
-${
-  preEventDate
-    ? "集合時間: " +
-      Utilities.formatDate(preEventDate, "JST", "yyyy-MM-dd HH:mm")
-    : ""
-}
-${preParticipants.length ? "参加者: " + preParticipants.join(",") : ""}
-${preRemarks ? "備考: " + preRemarks : ""}
+${this.messageCreate.getEventNameMessage(
+  preEventName
+)}${this.messageCreate.getDateMessage(
+      preEventDate
+    )}${this.messageCreate.getParticipantsMessage(
+      preParticipants
+    )}${this.messageCreate.getRemakrsMessage(preRemarks)}
 
 =================================
 
 変更後:
-イベント名: ${eventName}
-${
-  eventDate
-    ? "集合時間: " + Utilities.formatDate(eventDate, "JST", "yyyy-MM-dd HH:mm")
-    : ""
-}
-${participants.length ? "参加者: " + participants.join(",") : ""}
-${remarks ? "備考: " + remarks : ""}
+${this.messageCreate.getEventNameMessage(
+  eventName
+)}${this.messageCreate.getDateMessage(
+      eventDate
+    )}${this.messageCreate.getParticipantsMessage(
+      participants
+    )}${this.messageCreate.getRemakrsMessage(remarks)}
 `;
 
     const headers = this.getHeaders();
@@ -148,14 +144,13 @@ ${remarks ? "備考: " + remarks : ""}
     const message = `
 以下のスケジュールを削除しました。
 
-イベント名: ${eventName}
-${
-  eventDate
-    ? "集合時間: " + Utilities.formatDate(eventDate, "JST", "yyyy-MM-dd HH:mm")
-    : ""
-}
-${participants.length ? "参加者: " + participants.join(",") : ""}
-${remarks ? "備考: " + remarks : ""}
+${this.messageCreate.getEventNameMessage(
+  eventName
+)}${this.messageCreate.getDateMessage(
+      eventDate
+    )}${this.messageCreate.getParticipantsMessage(
+      participants
+    )}${this.messageCreate.getRemakrsMessage(remarks)}
 `;
 
     const headers = this.getHeaders();
