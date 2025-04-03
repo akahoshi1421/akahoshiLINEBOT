@@ -10,4 +10,5 @@ export const doGetAndSendSchedules = () => {
   });
 
   const sendMessageController = new SendMessageController();
+  sendMessageController.notifySchedules(schedulesAll);
 };
