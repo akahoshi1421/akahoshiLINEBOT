@@ -51,10 +51,13 @@ export class SendMessageController {
     const message = `
 以下のスケジュールを作成しました。
 
-${this.messageCreate.getEventNameMessage(eventName)}
-${this.messageCreate.getDateMessage(eventDate)}
-${this.messageCreate.getParticipantsStringMessage(participants)}
-${this.messageCreate.getRemakrsMessage(remarks)}
+${this.messageCreate.getEventNameMessage(
+  eventName
+)}${this.messageCreate.getDateMessage(
+      eventDate
+    )}${this.messageCreate.getParticipantsStringMessage(
+      participants
+    )}${this.messageCreate.getRemakrsMessage(remarks)}
 `;
 
     const headers = this.getHeaders();
