@@ -57,8 +57,7 @@ ${this.messageCreate.getEventNameMessage(
       eventDate
     )}${this.messageCreate.getParticipantsStringMessage(
       participants
-    )}${this.messageCreate.getRemakrsMessage(remarks)}
-`;
+    )}${this.messageCreate.getRemakrsMessage(remarks)}`;
 
     const headers = this.getHeaders();
 
