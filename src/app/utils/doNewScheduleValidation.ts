@@ -15,18 +15,24 @@ export const doNewScheduleValidation = (arrayData: string[][]) => {
     newShceduleSchemaData
   );
 
+  const sendMessageController = new SendMessageController();
+
   if (!newShceduleSchemaResult.success) {
     const errors = newShceduleSchemaResult.error.errors;
     const errorMessages = errors.map((error) => error.message);
-    const sendMessageControllerError = new SendMessageController();
-    sendMessageControllerError.sendErrorMessage(errorMessages);
+    sendMessageController.sendErrorMessage(errorMessages);
 
+    return false;
+  }
+  const data = SheetController.getData(newShceduleSchemaData.eventName);
+
+  if (data.schedule) {
+    sendMessageController.sendErrorMessage(["そのイベント名は登録済みです"]);
     return false;
   }
 
   SheetController.addSchedule(newShceduleSchemaData);
 
-  const sendMessageController = new SendMessageController();
   sendMessageController.newMessage(newShceduleSchemaData);
 
   return true;
