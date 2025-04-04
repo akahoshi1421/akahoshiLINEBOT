@@ -4,6 +4,7 @@ import { NotifySchedule } from "../types/lineMessageData";
 import { getOneNotifyScheduleMessage } from "./getOneNotifyScheduleMessage";
 import { MessageCreate } from "./messageCreate";
 import { getAllInOneNotifyScheduleMessage } from "./getAllInOneNotifyScheduleMessage";
+import { getRemovedIfLastLineBreak } from "./getRemovedIfLastLineBreak";
 
 export class SendMessageController {
   private readonly LINE_URL: string;
@@ -59,11 +60,13 @@ ${this.messageCreate.getEventNameMessage(
       participants
     )}${this.messageCreate.getRemakrsMessage(remarks)}`;
 
+    const removedLastLineBreakMessage = getRemovedIfLastLineBreak(message);
+
     const headers = this.getHeaders();
 
     const postData = {
       to: this.groupId,
-      messages: [{ type: "text", text: message }],
+      messages: [{ type: "text", text: removedLastLineBreakMessage }],
     };
 
     const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
@@ -114,11 +117,13 @@ ${this.messageCreate.getEventNameMessage(
       participants
     )}${this.messageCreate.getRemakrsMessage(remarks)}`;
 
+    const removedLastLineBreakMessage = getRemovedIfLastLineBreak(message);
+
     const headers = this.getHeaders();
 
     const postData = {
       to: this.groupId,
-      messages: [{ type: "text", text: message }],
+      messages: [{ type: "text", text: removedLastLineBreakMessage }],
     };
 
     const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
@@ -150,11 +155,13 @@ ${this.messageCreate.getEventNameMessage(
       participants
     )}${this.messageCreate.getRemakrsMessage(remarks)}`;
 
+    const removedLastLineBreakMessage = getRemovedIfLastLineBreak(message);
+
     const headers = this.getHeaders();
 
     const postData = {
       to: this.groupId,
-      messages: [{ type: "text", text: message }],
+      messages: [{ type: "text", text: removedLastLineBreakMessage }],
     };
 
     const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
@@ -214,12 +221,13 @@ ${this.messageCreate.getEventNameMessage(
 
   public notifySchedules(schedules: NotifySchedule[]) {
     const message = getAllInOneNotifyScheduleMessage(schedules);
+    const removedLastLineBreakMessage = getRemovedIfLastLineBreak(message);
 
     const headers = this.getHeaders();
 
     const postData = {
       to: this.groupId,
-      messages: [{ type: "text", text: message }],
+      messages: [{ type: "text", text: removedLastLineBreakMessage }],
     };
 
     const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {

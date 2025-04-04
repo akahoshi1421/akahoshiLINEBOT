@@ -1,4 +1,5 @@
 import type { NotifySchedule } from "../types/lineMessageData";
+import { getRemovedIfLastLineBreak } from "./getRemovedIfLastLineBreak";
 import { MessageCreate } from "./messageCreate";
 
 export const getOneNotifyScheduleMessage = (
@@ -25,5 +26,8 @@ ${messageCreate.getEventNameMessage(eventName)}${messageCreate.getDateMessage(
     );
   }, `以下のスケジュールが${ago}です\n`);
 
-  return schedulesAll.length ? schedulesMessages : "";
+  const removedLastLineBreakScheduleMessages =
+    getRemovedIfLastLineBreak(schedulesMessages);
+
+  return schedulesAll.length ? removedLastLineBreakScheduleMessages : "";
 };
