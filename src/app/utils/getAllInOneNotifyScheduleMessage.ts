@@ -20,8 +20,7 @@ ${messageCreate.getEventNameMessage(eventName)}${messageCreate.getDateMessage(
         eventDate
       )}${messageCreate.getParticipantsMessage(
         schedule.participants
-      )}${messageCreate.getRemakrsMessage(remarks)}
-`
+      )}${messageCreate.getRemakrsMessage(remarks)}`
     );
   }, "スケジュール予定一覧\n");
 

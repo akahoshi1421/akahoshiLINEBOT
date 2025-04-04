@@ -104,7 +104,6 @@ ${this.messageCreate.getEventNameMessage(
     )}${this.messageCreate.getParticipantsMessage(
       preParticipants
     )}${this.messageCreate.getRemakrsMessage(preRemarks)}
-
 ↓↓↓
 
 変更後:
@@ -114,8 +113,7 @@ ${this.messageCreate.getEventNameMessage(
       eventDate
     )}${this.messageCreate.getParticipantsMessage(
       participants
-    )}${this.messageCreate.getRemakrsMessage(remarks)}
-`;
+    )}${this.messageCreate.getRemakrsMessage(remarks)}`;
 
     const headers = this.getHeaders();
 
@@ -151,8 +149,7 @@ ${this.messageCreate.getEventNameMessage(
       eventDate
     )}${this.messageCreate.getParticipantsMessage(
       participants
-    )}${this.messageCreate.getRemakrsMessage(remarks)}
-`;
+    )}${this.messageCreate.getRemakrsMessage(remarks)}`;
 
     const headers = this.getHeaders();
 
