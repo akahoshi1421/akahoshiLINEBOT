@@ -9,7 +9,7 @@ type Props = {
 
 const empty = { eventName: "", eventDate: "", remarks: "" };
 
-// 最下部の新規追加行。イベント名を入力して onBlur すると登録される。
+// 最下部の新規追加行。既存行と違い onBlur では登録せず、「追加」ボタン押下で登録する。
 export const ScheduleDraftRow = ({ onCreate }: Props) => {
   const [draft, setDraft] = useState(empty);
 
@@ -30,7 +30,6 @@ export const ScheduleDraftRow = ({ onCreate }: Props) => {
           value={draft.eventName}
           placeholder="＋ 新規追加"
           onChange={(e) => setDraft({ ...draft, eventName: e.target.value })}
-          onBlur={commit}
         />
       </Table.Cell>
       <Table.Cell>
