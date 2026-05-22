@@ -1,5 +1,9 @@
 import { atom } from "jotai";
-import { atomWithMutation, atomWithQuery } from "jotai-tanstack-query";
+import {
+  atomWithMutation,
+  atomWithMutationState,
+  atomWithQuery,
+} from "jotai-tanstack-query";
 import { api } from "../api/client";
 import type { ScheduleInputDTO } from "../api/types";
 import { queryClient } from "./queryClient";
@@ -87,4 +91,30 @@ export const removeParticipantAtom = atomWithMutation(() => ({
     api.removeParticipant(vars.scheduleId, vars.name),
   onSuccess: (_data, vars) =>
     queryClient.invalidateQueries({ queryKey: keys.detail(vars.scheduleId) }),
+}));
+
+// ---- 進行中ミューテーションの集約 ----
+// 単一の mutation atom の isPending/variables は「最新の mutate」しか追えないため、
+// MutationCache から pending な Mutation を全件読み、同時実行でも各対象を loading にする。
+
+// 削除中のスケジュール id 一覧
+export const deletingScheduleIdsAtom = atomWithMutationState(() => ({
+  filters: { mutationKey: ["deleteSchedule"], status: "pending" },
+  select: (m) => m.state.variables as number,
+}));
+
+// 削除中の参加者(scheduleId,name)一覧
+export const removingParticipantsAtom = atomWithMutationState(() => ({
+  filters: { mutationKey: ["removeParticipant"], status: "pending" },
+  select: (m) => m.state.variables as { scheduleId: number; name: string },
+}));
+
+// 作成中のスケジュール（>0 件で一覧末尾にスピナー）
+export const creatingSchedulesAtom = atomWithMutationState(() => ({
+  filters: { mutationKey: ["createSchedule"], status: "pending" },
+}));
+
+// 追加中の参加者（>0 件で参加者一覧末尾にスピナー）
+export const addingParticipantsAtom = atomWithMutationState(() => ({
+  filters: { mutationKey: ["addParticipant"], status: "pending" },
 }));

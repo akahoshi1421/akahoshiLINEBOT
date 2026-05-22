@@ -2,7 +2,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import {
-  addParticipantAtom,
+  addingParticipantsAtom,
   scheduleDetailAtom,
   scheduleIdAtom,
 } from "../../atoms/schedules";
@@ -20,8 +20,8 @@ export const useDetailPage = () => {
   }, [scheduleId, setScheduleId]);
 
   const { data, isPending } = useAtomValue(scheduleDetailAtom);
-  // 参加者追加が一覧に反映される(refetch 完了)まで isPending が true
-  const { isPending: adding } = useAtomValue(addParticipantAtom);
+  // 追加中(refetch 完了まで pending)が 1 件以上ならスピナーを出す
+  const adding = useAtomValue(addingParticipantsAtom).length > 0;
 
   return { scheduleId, schedule: data ?? null, loading: isPending, adding };
 };

@@ -1,6 +1,9 @@
 import { Button, Flex, Tag } from "@chakra-ui/react";
 import { useAtomValue } from "jotai";
-import { removeParticipantAtom } from "../../../atoms/schedules";
+import {
+  removeParticipantAtom,
+  removingParticipantsAtom,
+} from "../../../atoms/schedules";
 
 type Props = {
   scheduleId: number;
@@ -9,14 +12,13 @@ type Props = {
 
 // 参加者 1 名分の行。削除はミューテーション atom を直接利用。
 export const ParticipantRow = ({ scheduleId, name }: Props) => {
-  const {
-    mutate: remove,
-    isPending,
-    variables,
-  } = useAtomValue(removeParticipantAtom);
+  const { mutate: remove } = useAtomValue(removeParticipantAtom);
+  const removingParticipants = useAtomValue(removingParticipantsAtom);
 
-  // 削除 mutation は全行で共有されるため、変数が一致する行だけ loading にする
-  const removing = isPending && variables?.name === name;
+  // 同時削除でも対象だけ loading にする（pending な全削除の変数を見る）
+  const removing = removingParticipants.some(
+    (v) => v?.scheduleId === scheduleId && v?.name === name
+  );
 
   return (
     <Flex
