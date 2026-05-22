@@ -11,74 +11,61 @@ import type {
 
 const gassma = new GassmaClient();
 
-// 参加者名のカンマ区切り文字列を Participant の nested write 用配列へ変換する。
-// FK の eventName はランタイムでは自動設定されるが、生成型が必須としているため明示する。
-const toParticipantCreateData = (eventName: string, participants: string) =>
-  participants.split(",").map((name) => ({ eventName, name }));
-
 export class SheetController {
   public static addSchedule(data: NewSchedule) {
-    // nested write でスケジュールと参加者を 1 度に作成する
-    gassma.Schedule.create({
+    // autoincrement の id は作成後に確定するため、スケジュールを先に作成して
+    // 採番された id を参加者の外部キー(scheduleId)に利用する
+    const schedule = gassma.Schedule.create({
       data: {
         eventName: data.eventName,
         eventDate: data.eventDate || undefined,
         remarks: data.remarks || undefined,
-        ...(data.participants
-          ? {
-              participants: {
-                create: toParticipantCreateData(
-                  data.eventName,
-                  data.participants
-                ),
-              },
-            }
-          : {}),
       },
     });
+
+    if (data.participants && schedule.id !== null) {
+      const scheduleId = schedule.id;
+      gassma.Participant.createMany({
+        data: data.participants
+          .split(",")
+          .map((name) => ({ scheduleId, name })),
+      });
+    }
   }
 
   public static changeSchedule(data: ChangeSchedule) {
-    const updateData: {
-      eventDate?: Date;
-      remarks?: string;
-    } = {};
+    const schedule = gassma.Schedule.findFirst({
+      where: { eventName: data.eventName },
+    });
 
+    if (!schedule || schedule.id === null) return;
+    const scheduleId = schedule.id;
+
+    const updateData: { eventDate?: Date; remarks?: string } = {};
     if (data.eventDate) updateData.eventDate = data.eventDate;
     if (data.remarks) updateData.remarks = data.remarks;
 
-    // 参加者の追加・削除をリレーションの nested write で表現する
-    const participantsWrite: {
-      create?: { eventName: string; name: string }[];
-      deleteMany?: { name: { in: string[] } };
-    } = {};
-
-    if (data.participantAdd) {
-      participantsWrite.create = toParticipantCreateData(
-        data.eventName,
-        data.participantAdd
-      );
+    if (Object.keys(updateData).length) {
+      gassma.Schedule.updateMany({ where: { id: scheduleId }, data: updateData });
     }
 
     if (data.participantRemove) {
-      participantsWrite.deleteMany = {
-        name: { in: data.participantRemove.split(",") },
-      };
+      gassma.Participant.deleteMany({
+        where: { scheduleId, name: { in: data.participantRemove.split(",") } },
+      });
     }
 
-    gassma.Schedule.update({
-      where: { eventName: data.eventName },
-      data: {
-        ...updateData,
-        ...(Object.keys(participantsWrite).length
-          ? { participants: participantsWrite }
-          : {}),
-      },
-    });
+    if (data.participantAdd) {
+      gassma.Participant.createMany({
+        data: data.participantAdd
+          .split(",")
+          .map((name) => ({ scheduleId, name })),
+      });
+    }
   }
 
   public static deleteSchedule(data: DeleteSchedule) {
-    // onDelete: Cascade により参加者も同時に削除される
+    // onDelete: Cascade により、紐づく参加者(scheduleId)も同時に削除される
     gassma.Schedule.deleteMany({
       where: { eventName: data.eventName },
     });
@@ -96,9 +83,11 @@ export class SheetController {
     return { schedule, participantsStringArray };
   }
 
-  public static getParticipants(eventName: string) {
+  public static getParticipants(scheduleId: number | null) {
+    if (scheduleId === null) return [];
+
     const participants = gassma.Participant.findMany({
-      where: { eventName },
+      where: { scheduleId },
       select: { name: true },
     });
 

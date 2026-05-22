@@ -13,25 +13,25 @@ export function notify() {
 
   const twoWeeksSchedulesAll: NotifySchedule[] = twoWeeksSchedules.map(
     (schedule) => {
-      const participants = SheetController.getParticipants(schedule.eventName);
+      const participants = SheetController.getParticipants(schedule.id);
       return { schedule, participants };
     }
   );
   const oneWeekSchedulesAll: NotifySchedule[] = oneWeekSchedules.map(
     (schedule) => {
-      const participants = SheetController.getParticipants(schedule.eventName);
+      const participants = SheetController.getParticipants(schedule.id);
       return { schedule, participants };
     }
   );
   const threeDaysSchedulesAll: NotifySchedule[] = threeDaysSchedules.map(
     (schedule) => {
-      const participants = SheetController.getParticipants(schedule.eventName);
+      const participants = SheetController.getParticipants(schedule.id);
       return { schedule, participants };
     }
   );
   const oneDaySchedulesAll: NotifySchedule[] = oneDaySchedules.map(
     (schedule) => {
-      const participants = SheetController.getParticipants(schedule.eventName);
+      const participants = SheetController.getParticipants(schedule.id);
       return { schedule, participants };
     }
   );
