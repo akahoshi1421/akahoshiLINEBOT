@@ -31,6 +31,7 @@ export const ScheduleEditRow = ({ schedule }: Props) => {
           placeholder="イベント名"
           onChange={(e) => setEventName(e.target.value)}
           onBlur={commitEventName}
+          disabled={removing}
         />
       </Table.Cell>
       <Table.Cell>
@@ -39,6 +40,7 @@ export const ScheduleEditRow = ({ schedule }: Props) => {
           value={eventDate}
           onChange={(e) => setEventDate(e.target.value)}
           onBlur={commitEventDate}
+          disabled={removing}
         />
       </Table.Cell>
       <Table.Cell>
@@ -47,11 +49,17 @@ export const ScheduleEditRow = ({ schedule }: Props) => {
           placeholder="備考"
           onChange={(e) => setRemarks(e.target.value)}
           onBlur={commitRemarks}
+          disabled={removing}
         />
       </Table.Cell>
       <Table.Cell>
         <Flex gap={2}>
-          <Button size="sm" variant="outline" onClick={openDetail}>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={openDetail}
+            disabled={removing}
+          >
             詳細
           </Button>
           <Button
