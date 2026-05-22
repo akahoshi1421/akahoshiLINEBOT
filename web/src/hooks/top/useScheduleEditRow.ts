@@ -9,7 +9,14 @@ import { isoToLocalInput, localInputToIso } from "../../utils/date";
 export const useScheduleEditRow = (schedule: ScheduleDTO) => {
   const navigate = useNavigate();
   const { mutate: update } = useAtomValue(updateScheduleAtom);
-  const { mutate: remove } = useAtomValue(deleteScheduleAtom);
+  const {
+    mutate: remove,
+    isPending: deletePending,
+    variables: deletingId,
+  } = useAtomValue(deleteScheduleAtom);
+
+  // 削除 mutation は全行で共有されるため、変数(id)が一致する行だけ loading にする
+  const removing = deletePending && deletingId === schedule.id;
 
   const [eventName, setEventName] = useState(schedule.eventName);
   const [eventDate, setEventDate] = useState(isoToLocalInput(schedule.eventDate));
@@ -42,6 +49,7 @@ export const useScheduleEditRow = (schedule: ScheduleDTO) => {
     setRemarks,
     commitRemarks,
     remove: () => remove(schedule.id),
+    removing,
     openDetail: () => navigate(`/${schedule.id}`),
   };
 };

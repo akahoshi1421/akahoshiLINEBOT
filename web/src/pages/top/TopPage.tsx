@@ -13,7 +13,7 @@ import { ScheduleDraftRow } from "./components/ScheduleDraftRow";
 import { ScheduleEditRow } from "./components/ScheduleEditRow";
 
 export const TopPage = () => {
-  const { schedules, loading } = useTopPage();
+  const { schedules, loading, creating } = useTopPage();
 
   return (
     <>
@@ -42,6 +42,15 @@ export const TopPage = () => {
             {schedules.map((schedule) => (
               <ScheduleEditRow key={schedule.id} schedule={schedule} />
             ))}
+            {creating && (
+              <Table.Row>
+                <Table.Cell colSpan={4}>
+                  <Center py={2}>
+                    <Spinner size="md" />
+                  </Center>
+                </Table.Cell>
+              </Table.Row>
+            )}
             <ScheduleDraftRow />
           </Table.Body>
         </Table.Root>

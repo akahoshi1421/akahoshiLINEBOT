@@ -14,7 +14,7 @@ import { ParticipantAdder } from "./components/ParticipantAdder";
 import { ParticipantRow } from "./components/ParticipantRow";
 
 export const DetailPage = () => {
-  const { scheduleId, schedule, loading } = useDetailPage();
+  const { scheduleId, schedule, loading, adding } = useDetailPage();
 
   if (loading)
     return (
@@ -62,6 +62,11 @@ export const DetailPage = () => {
           {schedule.participants.map((name) => (
             <ParticipantRow key={name} scheduleId={scheduleId} name={name} />
           ))}
+          {adding && (
+            <Center py={2}>
+              <Spinner size="md" />
+            </Center>
+          )}
         </Stack>
 
         <ParticipantAdder scheduleId={scheduleId} />

@@ -19,6 +19,7 @@ export const ScheduleEditRow = ({ schedule }: Props) => {
     setRemarks,
     commitRemarks,
     remove,
+    removing,
     openDetail,
   } = useScheduleEditRow(schedule);
 
@@ -53,7 +54,13 @@ export const ScheduleEditRow = ({ schedule }: Props) => {
           <Button size="sm" variant="outline" onClick={openDetail}>
             詳細
           </Button>
-          <Button size="sm" variant="outline" colorPalette="red" onClick={remove}>
+          <Button
+            size="sm"
+            variant="outline"
+            colorPalette="red"
+            onClick={remove}
+            loading={removing}
+          >
             削除
           </Button>
         </Flex>

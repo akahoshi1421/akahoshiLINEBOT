@@ -37,35 +37,40 @@ export const scheduleDetailAtom = atomWithQuery((get) => {
   };
 });
 
-// ---- ミューテーション（成功時に関連クエリを無効化して再取得）----
+// ---- ミューテーション ----
+// onSuccess で invalidate の Promise を return することで、再取得(refetch)が完了する
+// まで mutation の isPending が true のままになる（＝「一覧に反映されるまで」を表せる）。
 
 export const createScheduleAtom = atomWithMutation(() => ({
   mutationKey: ["createSchedule"],
   mutationFn: (input: ScheduleInputDTO) => api.createSchedule(input),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: keys.future });
-    queryClient.invalidateQueries({ queryKey: keys.past });
-  },
+  onSuccess: () =>
+    Promise.all([
+      queryClient.invalidateQueries({ queryKey: keys.future }),
+      queryClient.invalidateQueries({ queryKey: keys.past }),
+    ]),
 }));
 
 export const updateScheduleAtom = atomWithMutation(() => ({
   mutationKey: ["updateSchedule"],
   mutationFn: (vars: { id: number; patch: Partial<ScheduleInputDTO> }) =>
     api.updateSchedule(vars.id, vars.patch),
-  onSuccess: (_data, vars) => {
-    queryClient.invalidateQueries({ queryKey: keys.future });
-    queryClient.invalidateQueries({ queryKey: keys.past });
-    queryClient.invalidateQueries({ queryKey: keys.detail(vars.id) });
-  },
+  onSuccess: (_data, vars) =>
+    Promise.all([
+      queryClient.invalidateQueries({ queryKey: keys.future }),
+      queryClient.invalidateQueries({ queryKey: keys.past }),
+      queryClient.invalidateQueries({ queryKey: keys.detail(vars.id) }),
+    ]),
 }));
 
 export const deleteScheduleAtom = atomWithMutation(() => ({
   mutationKey: ["deleteSchedule"],
   mutationFn: (id: number) => api.deleteSchedule(id),
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: keys.future });
-    queryClient.invalidateQueries({ queryKey: keys.past });
-  },
+  onSuccess: () =>
+    Promise.all([
+      queryClient.invalidateQueries({ queryKey: keys.future }),
+      queryClient.invalidateQueries({ queryKey: keys.past }),
+    ]),
 }));
 
 export const addParticipantAtom = atomWithMutation(() => ({
