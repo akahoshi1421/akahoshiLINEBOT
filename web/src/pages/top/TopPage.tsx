@@ -1,4 +1,5 @@
 import {
+  Center,
   Flex,
   Heading,
   Link as ChakraLink,
@@ -6,44 +7,15 @@ import {
   Table,
   Text,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { api } from "../../api/client";
-import type { ScheduleDTO, ScheduleInputDTO } from "../../api/types";
-import { ScheduleEditRow } from "./components/ScheduleEditRow";
+import { useTopPage } from "../../hooks/top/useTopPage";
 import { ScheduleDraftRow } from "./components/ScheduleDraftRow";
-
-const onError = (err: unknown) =>
-  window.alert(err instanceof Error ? err.message : String(err));
+import { ScheduleEditRow } from "./components/ScheduleEditRow";
 
 export const TopPage = () => {
-  const [schedules, setSchedules] = useState<ScheduleDTO[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { schedules, loading, updateSchedule, deleteSchedule, createSchedule } =
+    useTopPage();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    api
-      .getFutureSchedules()
-      .then((res) => setSchedules(res))
-      .catch(onError)
-      .finally(() => setLoading(false));
-  }, []);
-
-  const handleUpdate = (id: number, patch: Partial<ScheduleInputDTO>) => {
-    api.updateSchedule(id, patch).catch(onError);
-  };
-
-  const handleDelete = (id: number) => {
-    api.deleteSchedule(id).catch(onError);
-    setSchedules((prev) => prev.filter((s) => s.id !== id));
-  };
-
-  const handleCreate = (input: ScheduleInputDTO) => {
-    api
-      .createSchedule(input)
-      .then((created) => setSchedules((prev) => [...prev, created]))
-      .catch(onError);
-  };
 
   return (
     <>
@@ -55,7 +27,9 @@ export const TopPage = () => {
       </Flex>
 
       {loading ? (
-        <Spinner />
+        <Center py={10}>
+          <Spinner size="xl" />
+        </Center>
       ) : (
         <Table.Root size="md" variant="outline" bg="white">
           <Table.Header>
@@ -71,12 +45,12 @@ export const TopPage = () => {
               <ScheduleEditRow
                 key={schedule.id}
                 schedule={schedule}
-                onUpdate={(patch) => handleUpdate(schedule.id, patch)}
-                onDelete={() => handleDelete(schedule.id)}
+                onUpdate={(patch) => updateSchedule(schedule.id, patch)}
+                onDelete={() => deleteSchedule(schedule.id)}
                 onOpen={() => navigate(`/${schedule.id}`)}
               />
             ))}
-            <ScheduleDraftRow onCreate={handleCreate} />
+            <ScheduleDraftRow onCreate={createSchedule} />
           </Table.Body>
         </Table.Root>
       )}

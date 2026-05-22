@@ -1,4 +1,5 @@
 import {
+  Center,
   Flex,
   Heading,
   Link as ChakraLink,
@@ -6,27 +7,13 @@ import {
   Table,
   Text,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { api } from "../../api/client";
-import type { ScheduleDTO } from "../../api/types";
+import { usePastPage } from "../../hooks/past/usePastPage";
 import { PastScheduleRow } from "./components/PastScheduleRow";
 
-const onError = (err: unknown) =>
-  window.alert(err instanceof Error ? err.message : String(err));
-
 export const PastPage = () => {
-  const [schedules, setSchedules] = useState<ScheduleDTO[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { schedules, loading } = usePastPage();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    api
-      .getPastSchedules()
-      .then((res) => setSchedules(res))
-      .catch(onError)
-      .finally(() => setLoading(false));
-  }, []);
 
   return (
     <>
@@ -38,7 +25,9 @@ export const PastPage = () => {
       </Flex>
 
       {loading ? (
-        <Spinner />
+        <Center py={10}>
+          <Spinner size="xl" />
+        </Center>
       ) : schedules.length === 0 ? (
         <Text color="gray.500">過去の予定はありません。</Text>
       ) : (

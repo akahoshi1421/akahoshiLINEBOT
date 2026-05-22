@@ -1,52 +1,31 @@
 import {
   Box,
+  Center,
   Heading,
   Link as ChakraLink,
   Spinner,
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
 import { Link as RouterLink, useParams } from "react-router-dom";
-import { api } from "../../api/client";
-import type { ScheduleDetailDTO } from "../../api/types";
+import { useDetailPage } from "../../hooks/detail/useDetailPage";
 import { formatForDisplay } from "../../utils/date";
 import { ParticipantAdder } from "./components/ParticipantAdder";
 import { ParticipantRow } from "./components/ParticipantRow";
 
-const onError = (err: unknown) =>
-  window.alert(err instanceof Error ? err.message : String(err));
-
 export const DetailPage = () => {
   const { id } = useParams();
   const scheduleId = Number(id);
-  const [schedule, setSchedule] = useState<ScheduleDetailDTO | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { schedule, loading, addParticipant, removeParticipant } =
+    useDetailPage(scheduleId);
 
-  useEffect(() => {
-    api
-      .getSchedule(scheduleId)
-      .then((res) => setSchedule(res))
-      .catch(onError)
-      .finally(() => setLoading(false));
-  }, [scheduleId]);
+  if (loading)
+    return (
+      <Center py={10}>
+        <Spinner size="xl" />
+      </Center>
+    );
 
-  const addParticipant = (name: string) => {
-    if (!schedule) return;
-    api.addParticipant(scheduleId, name).catch(onError);
-    setSchedule({ ...schedule, participants: [...schedule.participants, name] });
-  };
-
-  const removeParticipant = (name: string) => {
-    if (!schedule) return;
-    api.removeParticipant(scheduleId, name).catch(onError);
-    setSchedule({
-      ...schedule,
-      participants: schedule.participants.filter((p) => p !== name),
-    });
-  };
-
-  if (loading) return <Spinner />;
   if (!schedule)
     return (
       <Stack gap={4}>
