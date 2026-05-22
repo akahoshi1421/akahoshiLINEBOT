@@ -1,156 +1,119 @@
-import { Gassma, type Gassmaスケジュール一覧UpdateData } from "../types/gassma";
+import { GassmaClient } from "../../generated/gassma/schemaClient";
+import type {
+  ScheduleRecord,
+  ScheduleWithParticipants,
+} from "../types/gassma";
 import type {
   ChangeSchedule,
   DeleteSchedule,
   NewSchedule,
 } from "../types/schema";
 
-const gassma = new Gassma.GassmaClient();
+const gassma = new GassmaClient();
+
+// 参加者名のカンマ区切り文字列を Participant の nested write 用配列へ変換する。
+// FK の eventName はランタイムでは自動設定されるが、生成型が必須としているため明示する。
+const toParticipantCreateData = (eventName: string, participants: string) =>
+  participants.split(",").map((name) => ({ eventName, name }));
 
 export class SheetController {
   public static addSchedule(data: NewSchedule) {
-    gassma.sheets.スケジュール一覧.create({
+    // nested write でスケジュールと参加者を 1 度に作成する
+    gassma.Schedule.create({
       data: {
-        イベント名: data.eventName,
-        集合時間: data.eventDate || undefined,
-        備考: data.remarks || undefined,
+        eventName: data.eventName,
+        eventDate: data.eventDate || undefined,
+        remarks: data.remarks || undefined,
+        ...(data.participants
+          ? {
+              participants: {
+                create: toParticipantCreateData(
+                  data.eventName,
+                  data.participants
+                ),
+              },
+            }
+          : {}),
       },
-    });
-
-    if (!data.participants) return;
-
-    const participantsArray = data.participants
-      .split(",")
-      .map((participant) => {
-        return {
-          イベント名: data.eventName,
-          参加者名: participant,
-        };
-      });
-
-    gassma.sheets.参加者.createMany({
-      data: participantsArray,
     });
   }
 
   public static changeSchedule(data: ChangeSchedule) {
-    const updateManyData: Gassmaスケジュール一覧UpdateData = {
-      where: {
-        イベント名: data.eventName,
-      },
-      data: {
-        イベント名: data.eventName,
-      },
-    };
+    const updateData: {
+      eventDate?: Date;
+      remarks?: string;
+    } = {};
 
-    if (data.eventDate) updateManyData.data["集合時間"] = data.eventDate;
-    if (data.remarks) updateManyData.data["備考"] = data.remarks;
+    if (data.eventDate) updateData.eventDate = data.eventDate;
+    if (data.remarks) updateData.remarks = data.remarks;
 
-    gassma.sheets.スケジュール一覧.updateMany(updateManyData);
+    // 参加者の追加・削除をリレーションの nested write で表現する
+    const participantsWrite: {
+      create?: { eventName: string; name: string }[];
+      deleteMany?: { name: { in: string[] } };
+    } = {};
 
     if (data.participantAdd) {
-      const participantsArray = data.participantAdd
-        .split(",")
-        .map((participant) => {
-          return {
-            イベント名: data.eventName,
-            参加者名: participant,
-          };
-        });
-
-      gassma.sheets.参加者.createMany({
-        data: participantsArray,
-      });
+      participantsWrite.create = toParticipantCreateData(
+        data.eventName,
+        data.participantAdd
+      );
     }
 
     if (data.participantRemove) {
-      const participantsArray = data.participantRemove.split(",");
-
-      gassma.sheets.参加者.deleteMany({
-        where: {
-          イベント名: data.eventName,
-          参加者名: {
-            in: participantsArray,
-          },
-        },
-      });
+      participantsWrite.deleteMany = {
+        name: { in: data.participantRemove.split(",") },
+      };
     }
+
+    gassma.Schedule.update({
+      where: { eventName: data.eventName },
+      data: {
+        ...updateData,
+        ...(Object.keys(participantsWrite).length
+          ? { participants: participantsWrite }
+          : {}),
+      },
+    });
   }
 
   public static deleteSchedule(data: DeleteSchedule) {
-    gassma.sheets.スケジュール一覧.deleteMany({
-      where: {
-        イベント名: data.eventName,
-      },
-    });
-
-    gassma.sheets.参加者.deleteMany({
-      where: {
-        イベント名: data.eventName,
-      },
+    // onDelete: Cascade により参加者も同時に削除される
+    gassma.Schedule.deleteMany({
+      where: { eventName: data.eventName },
     });
   }
 
   public static getData(eventName: string) {
-    const schedule = gassma.sheets.スケジュール一覧.findFirst({
-      where: {
-        イベント名: eventName,
-      },
-    });
+    const schedule = gassma.Schedule.findFirst({
+      where: { eventName },
+      include: { participants: true },
+    }) as ScheduleWithParticipants | null;
 
-    const participants = gassma.sheets.参加者.findMany({
-      where: {
-        イベント名: eventName,
-      },
-      select: {
-        参加者名: true,
-      },
-    });
-
-    const participantsStringArray = participants.map(
-      (participant) => participant.参加者名
-    );
+    const participantsStringArray =
+      schedule?.participants.map((participant) => participant.name) ?? [];
 
     return { schedule, participantsStringArray };
   }
 
   public static getParticipants(eventName: string) {
-    const participants = gassma.sheets.参加者.findMany({
-      where: {
-        イベント名: eventName,
-      },
-      select: {
-        参加者名: true,
-      },
+    const participants = gassma.Participant.findMany({
+      where: { eventName },
+      select: { name: true },
     });
 
-    const participantsStringArray = participants.map(
-      (participant) => participant.参加者名
-    );
-
-    return participantsStringArray;
+    return participants.map((participant) => participant.name);
   }
 
-  public static getAllData() {
-    const schedule = gassma.sheets.スケジュール一覧.findMany({});
-    return schedule;
+  public static getAllData(): ScheduleRecord[] {
+    return gassma.Schedule.findMany({});
   }
 
-  public static getAllFutureScheduleData() {
-    const schedule = gassma.sheets.スケジュール一覧.findMany({
+  public static getAllFutureScheduleData(): ScheduleRecord[] {
+    return gassma.Schedule.findMany({
       where: {
-        OR: [
-          {
-            集合時間: {
-              gte: new Date(),
-            },
-          },
-          {
-            集合時間: null,
-          },
-        ],
+        OR: [{ eventDate: { gte: new Date() } }, { eventDate: null }],
       },
     });
-    return schedule;
   }
 }

@@ -29,13 +29,18 @@ export const doChangeScheduleValidation = (arrayData: string[][]) => {
     participantsStringArray: preParticipantsStringArray,
   } = SheetController.getData(changeScheduleSchemaData.eventName);
 
+  const sendMessageController = new SendMessageController();
+  if (!preSchedule) {
+    sendMessageController.sendErrorMessage(["該当のスケジュールがありません"]);
+    return false;
+  }
+
   SheetController.changeSchedule(changeScheduleSchemaData);
 
   const { schedule, participantsStringArray } = SheetController.getData(
     changeScheduleSchemaData.eventName
   );
 
-  const sendMessageController = new SendMessageController();
   if (!schedule) {
     sendMessageController.sendErrorMessage(["該当のスケジュールがありません"]);
     return false;

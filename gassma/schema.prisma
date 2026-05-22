@@ -1,0 +1,24 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./src/generated/gassma"
+}
+
+/// スケジュール一覧シート
+model Schedule {
+  eventName    String        @id @map("イベント名")
+  eventDate    DateTime?     @map("集合時間")
+  remarks      String?       @map("備考")
+  participants Participant[]
+
+  @@map("スケジュール一覧")
+}
+
+/// 参加者シート（スケジュールに対して多）
+model Participant {
+  eventName String   @map("イベント名")
+  name      String   @map("参加者名")
+  schedule  Schedule @relation(fields: [eventName], references: [eventName], onDelete: Cascade)
+
+  @@id([eventName, name])
+  @@map("参加者")
+}

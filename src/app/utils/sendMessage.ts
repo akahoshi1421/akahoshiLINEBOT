@@ -1,4 +1,4 @@
-import type { Gassmaスケジュール一覧CreateReturn } from "gassma";
+import type { ScheduleRecord } from "../types/gassma";
 import type { NewSchedule } from "../types/schema";
 import { NotifySchedule } from "../types/lineMessageData";
 import { getOneNotifyScheduleMessage } from "./getOneNotifyScheduleMessage";
@@ -79,22 +79,18 @@ ${this.messageCreate.getEventNameMessage(
   }
 
   public changeMessage(
-    preSchedule: Gassmaスケジュール一覧CreateReturn,
+    preSchedule: ScheduleRecord,
     preParticipants: string[],
-    schedule: Gassmaスケジュール一覧CreateReturn,
+    schedule: ScheduleRecord,
     participants: string[]
   ) {
     const {
-      イベント名: preEventName,
-      集合時間: preEventDate,
-      備考: preRemarks,
+      eventName: preEventName,
+      eventDate: preEventDate,
+      remarks: preRemarks,
     } = preSchedule;
 
-    const {
-      イベント名: eventName,
-      集合時間: eventDate,
-      備考: remarks,
-    } = schedule;
+    const { eventName, eventDate, remarks } = schedule;
 
     const message = `以下のスケジュールを変更しました。
 
@@ -135,15 +131,8 @@ ${this.messageCreate.getEventNameMessage(
     UrlFetchApp.fetch(this.LINE_URL, options);
   }
 
-  public deleteMessage(
-    schedule: Gassmaスケジュール一覧CreateReturn,
-    participants: string[]
-  ) {
-    const {
-      イベント名: eventName,
-      集合時間: eventDate,
-      備考: remarks,
-    } = schedule;
+  public deleteMessage(schedule: ScheduleRecord, participants: string[]) {
+    const { eventName, eventDate, remarks } = schedule;
 
     const message = `以下のスケジュールを削除しました。
 

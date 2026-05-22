@@ -1,4 +1,4 @@
-import type { Gassmaスケジュール一覧CreateReturn } from "gassma";
+import type { ScheduleRecord } from "./gassma";
 
 type MessageData = {
   message: {
@@ -11,6 +11,6 @@ export type LineMessageData = {
 };
 
 export type NotifySchedule = {
-  schedule: Gassmaスケジュール一覧CreateReturn;
+  schedule: ScheduleRecord;
   participants: string[];
 };

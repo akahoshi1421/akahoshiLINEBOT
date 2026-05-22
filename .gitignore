@@ -6,3 +6,6 @@ package-lock.json
 dist/*
 
 !dist/appsscript.json
+
+# gassma generate による自動生成物
+src/generated/
