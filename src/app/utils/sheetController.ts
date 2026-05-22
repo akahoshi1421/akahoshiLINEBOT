@@ -3,87 +3,84 @@ import type {
   ScheduleRecord,
   ScheduleWithParticipants,
 } from "../types/gassma";
-import type {
-  ChangeSchedule,
-  DeleteSchedule,
-  NewSchedule,
-} from "../types/schema";
 
 const gassma = new GassmaClient();
 
+// スケジュール作成・更新で受け取る値
+export type ScheduleInput = {
+  eventName: string;
+  eventDate?: Date | null;
+  remarks?: string | null;
+};
+
 export class SheetController {
-  public static addSchedule(data: NewSchedule) {
-    // autoincrement の id は作成後に確定するため、スケジュールを先に作成して
-    // 採番された id を参加者の外部キー(scheduleId)に利用する
-    const schedule = gassma.Schedule.create({
-      data: {
-        eventName: data.eventName,
-        eventDate: data.eventDate || undefined,
-        remarks: data.remarks || undefined,
+  // 日程未定 + 未来のスケジュール（トップページ用）
+  public static getFutureSchedules(): ScheduleRecord[] {
+    return gassma.Schedule.findMany({
+      where: {
+        OR: [{ eventDate: { gte: new Date() } }, { eventDate: null }],
       },
-    });
-
-    if (data.participants && schedule.id !== null) {
-      const scheduleId = schedule.id;
-      gassma.Participant.createMany({
-        data: data.participants
-          .split(",")
-          .map((name) => ({ scheduleId, name })),
-      });
-    }
-  }
-
-  public static changeSchedule(data: ChangeSchedule) {
-    const schedule = gassma.Schedule.findFirst({
-      where: { eventName: data.eventName },
-    });
-
-    if (!schedule || schedule.id === null) return;
-    const scheduleId = schedule.id;
-
-    const updateData: { eventDate?: Date; remarks?: string } = {};
-    if (data.eventDate) updateData.eventDate = data.eventDate;
-    if (data.remarks) updateData.remarks = data.remarks;
-
-    if (Object.keys(updateData).length) {
-      gassma.Schedule.updateMany({ where: { id: scheduleId }, data: updateData });
-    }
-
-    if (data.participantRemove) {
-      gassma.Participant.deleteMany({
-        where: { scheduleId, name: { in: data.participantRemove.split(",") } },
-      });
-    }
-
-    if (data.participantAdd) {
-      gassma.Participant.createMany({
-        data: data.participantAdd
-          .split(",")
-          .map((name) => ({ scheduleId, name })),
-      });
-    }
-  }
-
-  public static deleteSchedule(data: DeleteSchedule) {
-    // onDelete: Cascade により、紐づく参加者(scheduleId)も同時に削除される
-    gassma.Schedule.deleteMany({
-      where: { eventName: data.eventName },
+      orderBy: { eventDate: { sort: "asc", nulls: "last" } },
     });
   }
 
-  public static getData(eventName: string) {
-    const schedule = gassma.Schedule.findFirst({
-      where: { eventName },
+  // 過去のスケジュール（過去一覧ページ用）
+  public static getPastSchedules(): ScheduleRecord[] {
+    return gassma.Schedule.findMany({
+      where: { eventDate: { lt: new Date() } },
+      orderBy: { eventDate: "desc" },
+    });
+  }
+
+  // id でスケジュールを取得（参加者を含む。詳細ページ用）
+  public static getById(id: number): ScheduleWithParticipants | null {
+    return gassma.Schedule.findFirst({
+      where: { id },
       include: { participants: true },
     }) as ScheduleWithParticipants | null;
-
-    const participantsStringArray =
-      schedule?.participants.map((participant) => participant.name) ?? [];
-
-    return { schedule, participantsStringArray };
   }
 
-  public static getParticipants(scheduleId: number | null) {
+  public static createSchedule(input: ScheduleInput): ScheduleRecord {
+    return gassma.Schedule.create({
+      data: {
+        eventName: input.eventName,
+        eventDate: input.eventDate || undefined,
+        remarks: input.remarks || undefined,
+      },
+    });
+  }
+
+  // 指定フィールドのみ更新する（onBlur 編集用）
+  public static updateById(id: number, patch: Partial<ScheduleInput>) {
+    const data: Record<string, string | Date | null> = {};
+
+    if (patch.eventName !== undefined) data.eventName = patch.eventName;
+    if (patch.eventDate !== undefined) data.eventDate = patch.eventDate;
+    if (patch.remarks !== undefined) data.remarks = patch.remarks;
+
+    if (Object.keys(data).length === 0) return;
+
+    // gassma の更新型は null 非対応だが、ランタイムでは null で空セルにできるためキャストする
+    gassma.Schedule.updateMany({
+      where: { id },
+      data: data as Parameters<typeof gassma.Schedule.updateMany>[0]["data"],
+    });
+  }
+
+  public static deleteById(id: number) {
+    // onDelete: Cascade により、紐づく参加者(scheduleId)も同時に削除される
+    gassma.Schedule.deleteMany({ where: { id } });
+  }
+
+  public static addParticipant(scheduleId: number, name: string) {
+    gassma.Participant.create({ data: { scheduleId, name } });
+  }
+
+  public static removeParticipant(scheduleId: number, name: string) {
+    gassma.Participant.deleteMany({ where: { scheduleId, name } });
+  }
+
+  public static getParticipants(scheduleId: number | null): string[] {
     if (scheduleId === null) return [];
 
     const participants = gassma.Participant.findMany({
@@ -94,15 +91,8 @@ export class SheetController {
     return participants.map((participant) => participant.name);
   }
 
+  // 通知フィルタ(scheduleFilter)用に全スケジュールを返す
   public static getAllData(): ScheduleRecord[] {
     return gassma.Schedule.findMany({});
-  }
-
-  public static getAllFutureScheduleData(): ScheduleRecord[] {
-    return gassma.Schedule.findMany({
-      where: {
-        OR: [{ eventDate: { gte: new Date() } }, { eventDate: null }],
-      },
-    });
   }
 }

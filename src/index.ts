@@ -1,10 +1,30 @@
-import { doPost, testFunc } from "./app/getMessage";
 import { notify } from "./app/notify";
+import {
+  apiAddParticipant,
+  apiCreateSchedule,
+  apiDeleteSchedule,
+  apiGetFutureSchedules,
+  apiGetPastSchedules,
+  apiGetSchedule,
+  apiRemoveParticipant,
+  apiUpdateSchedule,
+  doGet,
+} from "./app/server/web";
 
 declare const global: {
   [x: string]: unknown;
 };
 
-global.doPost = doPost;
-global.testFunc = testFunc;
+// Web アプリ配信 + LINE 定期通知
+global.doGet = doGet;
 global.notify = notify;
+
+// google.script.run から呼ぶ API
+global.apiGetFutureSchedules = apiGetFutureSchedules;
+global.apiGetPastSchedules = apiGetPastSchedules;
+global.apiGetSchedule = apiGetSchedule;
+global.apiCreateSchedule = apiCreateSchedule;
+global.apiUpdateSchedule = apiUpdateSchedule;
+global.apiDeleteSchedule = apiDeleteSchedule;
+global.apiAddParticipant = apiAddParticipant;
+global.apiRemoveParticipant = apiRemoveParticipant;
