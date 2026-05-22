@@ -7,16 +7,14 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { Link as RouterLink, useParams } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import { useDetailPage } from "../../hooks/detail/useDetailPage";
 import { formatForDisplay } from "../../utils/date";
 import { ParticipantAdder } from "./components/ParticipantAdder";
 import { ParticipantRow } from "./components/ParticipantRow";
 
 export const DetailPage = () => {
-  const { id } = useParams();
-  const scheduleId = Number(id);
-  const { schedule, loading } = useDetailPage(scheduleId);
+  const { scheduleId, schedule, loading } = useDetailPage();
 
   if (loading)
     return (
