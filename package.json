@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "generate": "gassma generate",
+    "prebuild": "gassma generate",
     "build": "webpack",
     "push": "npm run build && clasp push",
     "push:watch": "npm run build --watch & clasp push --watch"
