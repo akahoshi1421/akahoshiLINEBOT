@@ -21,6 +21,7 @@
     "@types/google-apps-script": "^1.0.97",
     "@types/json-schema": "7.0.15",
     "babel-loader": "^10.0.0",
+    "date-fns": "^4.2.1",
     "gas-webpack-plugin": "^2.6.0",
     "gassma": "^1.1.0",
     "jotai": "^2.20.0",
