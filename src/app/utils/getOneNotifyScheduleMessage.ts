@@ -10,9 +10,9 @@ export const getOneNotifyScheduleMessage = (
 
   const schedulesMessages = schedulesAll.reduce((pre, schedule) => {
     const {
-      イベント名: eventName,
-      集合時間: eventDate,
-      備考: remarks,
+      eventName,
+      eventDate,
+      remarks,
     } = schedule.schedule;
 
     return (
