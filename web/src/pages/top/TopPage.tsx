@@ -7,15 +7,13 @@ import {
   Table,
   Text,
 } from "@chakra-ui/react";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import { useTopPage } from "../../hooks/top/useTopPage";
 import { ScheduleDraftRow } from "./components/ScheduleDraftRow";
 import { ScheduleEditRow } from "./components/ScheduleEditRow";
 
 export const TopPage = () => {
-  const { schedules, loading, updateSchedule, deleteSchedule, createSchedule } =
-    useTopPage();
-  const navigate = useNavigate();
+  const { schedules, loading } = useTopPage();
 
   return (
     <>
@@ -42,15 +40,9 @@ export const TopPage = () => {
           </Table.Header>
           <Table.Body>
             {schedules.map((schedule) => (
-              <ScheduleEditRow
-                key={schedule.id}
-                schedule={schedule}
-                onUpdate={(patch) => updateSchedule(schedule.id, patch)}
-                onDelete={() => deleteSchedule(schedule.id)}
-                onOpen={() => navigate(`/${schedule.id}`)}
-              />
+              <ScheduleEditRow key={schedule.id} schedule={schedule} />
             ))}
-            <ScheduleDraftRow onCreate={createSchedule} />
+            <ScheduleDraftRow />
           </Table.Body>
         </Table.Root>
       )}

@@ -16,8 +16,7 @@ import { ParticipantRow } from "./components/ParticipantRow";
 export const DetailPage = () => {
   const { id } = useParams();
   const scheduleId = Number(id);
-  const { schedule, loading, addParticipant, removeParticipant } =
-    useDetailPage(scheduleId);
+  const { schedule, loading } = useDetailPage(scheduleId);
 
   if (loading)
     return (
@@ -63,15 +62,11 @@ export const DetailPage = () => {
             <Text color="gray.500">参加者はいません。</Text>
           )}
           {schedule.participants.map((name) => (
-            <ParticipantRow
-              key={name}
-              name={name}
-              onRemove={() => removeParticipant(name)}
-            />
+            <ParticipantRow key={name} scheduleId={scheduleId} name={name} />
           ))}
         </Stack>
 
-        <ParticipantAdder onAdd={addParticipant} />
+        <ParticipantAdder scheduleId={scheduleId} />
       </Box>
     </Stack>
   );

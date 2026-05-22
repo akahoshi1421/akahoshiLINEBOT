@@ -1,21 +1,20 @@
 import { Button, Input, Table } from "@chakra-ui/react";
+import { useAtomValue } from "jotai";
 import { useState } from "react";
-import type { ScheduleInputDTO } from "../../../api/types";
+import { createScheduleAtom } from "../../../atoms/schedules";
 import { localInputToIso } from "../../../utils/date";
-
-type Props = {
-  onCreate: (input: ScheduleInputDTO) => void;
-};
 
 const empty = { eventName: "", eventDate: "", remarks: "" };
 
-// 最下部の新規追加行。既存行と違い onBlur では登録せず、「追加」ボタン押下で登録する。
-export const ScheduleDraftRow = ({ onCreate }: Props) => {
+// 最下部の新規追加行。onBlur では登録せず「追加」ボタン押下で登録する。
+// 作成はグローバルなミューテーション atom を直接利用するので props は不要。
+export const ScheduleDraftRow = () => {
+  const { mutate: create } = useAtomValue(createScheduleAtom);
   const [draft, setDraft] = useState(empty);
 
   const commit = () => {
     if (!draft.eventName.trim()) return;
-    onCreate({
+    create({
       eventName: draft.eventName,
       eventDate: localInputToIso(draft.eventDate),
       remarks: draft.remarks,

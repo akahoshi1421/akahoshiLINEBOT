@@ -7,13 +7,12 @@ import {
   Table,
   Text,
 } from "@chakra-ui/react";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import { usePastPage } from "../../hooks/past/usePastPage";
 import { PastScheduleRow } from "./components/PastScheduleRow";
 
 export const PastPage = () => {
   const { schedules, loading } = usePastPage();
-  const navigate = useNavigate();
 
   return (
     <>
@@ -41,11 +40,7 @@ export const PastPage = () => {
           </Table.Header>
           <Table.Body>
             {schedules.map((schedule) => (
-              <PastScheduleRow
-                key={schedule.id}
-                schedule={schedule}
-                onOpen={() => navigate(`/${schedule.id}`)}
-              />
+              <PastScheduleRow key={schedule.id} schedule={schedule} />
             ))}
           </Table.Body>
         </Table.Root>

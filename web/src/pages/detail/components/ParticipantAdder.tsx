@@ -1,18 +1,21 @@
 import { Button, HStack, Input } from "@chakra-ui/react";
+import { useAtomValue } from "jotai";
 import { useState } from "react";
+import { addParticipantAtom } from "../../../atoms/schedules";
 
 type Props = {
-  onAdd: (name: string) => void;
+  scheduleId: number;
 };
 
-// 参加者の追加入力（Enter または「追加」ボタンで確定）
-export const ParticipantAdder = ({ onAdd }: Props) => {
+// 参加者の追加入力。追加はミューテーション atom を直接利用。
+export const ParticipantAdder = ({ scheduleId }: Props) => {
+  const { mutate: add } = useAtomValue(addParticipantAtom);
   const [name, setName] = useState("");
 
   const commit = () => {
     const trimmed = name.trim();
     if (!trimmed) return;
-    onAdd(trimmed);
+    add({ scheduleId, name: trimmed });
     setName("");
   };
 
