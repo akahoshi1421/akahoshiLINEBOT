@@ -1,7 +1,7 @@
 import { Button, Flex, Input, Table } from "@chakra-ui/react";
 import { useState } from "react";
-import type { ScheduleDTO, ScheduleInputDTO } from "../api/types";
-import { isoToLocalInput, localInputToIso } from "../utils/date";
+import type { ScheduleDTO, ScheduleInputDTO } from "../../../api/types";
+import { isoToLocalInput, localInputToIso } from "../../../utils/date";
 
 type Props = {
   schedule: ScheduleDTO;

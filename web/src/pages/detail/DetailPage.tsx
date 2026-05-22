@@ -1,21 +1,18 @@
 import {
   Box,
-  Button,
-  Flex,
   Heading,
-  HStack,
-  Input,
   Link as ChakraLink,
   Spinner,
   Stack,
-  Tag,
   Text,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Link as RouterLink, useParams } from "react-router-dom";
-import { api } from "../api/client";
-import type { ScheduleDetailDTO } from "../api/types";
-import { formatForDisplay } from "../utils/date";
+import { api } from "../../api/client";
+import type { ScheduleDetailDTO } from "../../api/types";
+import { formatForDisplay } from "../../utils/date";
+import { ParticipantAdder } from "./components/ParticipantAdder";
+import { ParticipantRow } from "./components/ParticipantRow";
 
 const onError = (err: unknown) =>
   window.alert(err instanceof Error ? err.message : String(err));
@@ -25,7 +22,6 @@ export const DetailPage = () => {
   const scheduleId = Number(id);
   const [schedule, setSchedule] = useState<ScheduleDetailDTO | null>(null);
   const [loading, setLoading] = useState(true);
-  const [newName, setNewName] = useState("");
 
   useEffect(() => {
     api
@@ -35,12 +31,10 @@ export const DetailPage = () => {
       .finally(() => setLoading(false));
   }, [scheduleId]);
 
-  const addParticipant = () => {
-    const name = newName.trim();
-    if (!name || !schedule) return;
+  const addParticipant = (name: string) => {
+    if (!schedule) return;
     api.addParticipant(scheduleId, name).catch(onError);
     setSchedule({ ...schedule, participants: [...schedule.participants, name] });
-    setNewName("");
   };
 
   const removeParticipant = (name: string) => {
@@ -73,8 +67,12 @@ export const DetailPage = () => {
         <Heading size="lg" mb={2}>
           {schedule.eventName}
         </Heading>
-        <Text color="gray.700">集合時間: {formatForDisplay(schedule.eventDate)}</Text>
-        {schedule.remarks && <Text color="gray.700">備考: {schedule.remarks}</Text>}
+        <Text color="gray.700">
+          集合時間: {formatForDisplay(schedule.eventDate)}
+        </Text>
+        {schedule.remarks && (
+          <Text color="gray.700">備考: {schedule.remarks}</Text>
+        )}
       </Box>
 
       <Box>
@@ -86,44 +84,15 @@ export const DetailPage = () => {
             <Text color="gray.500">参加者はいません。</Text>
           )}
           {schedule.participants.map((name) => (
-            <Flex
+            <ParticipantRow
               key={name}
-              justify="space-between"
-              align="center"
-              bg="white"
-              borderWidth="1px"
-              borderRadius="md"
-              px={4}
-              py={2}
-            >
-              <Tag.Root size="lg" colorPalette="teal">
-                <Tag.Label>{name}</Tag.Label>
-              </Tag.Root>
-              <Button
-                size="xs"
-                variant="outline"
-                colorPalette="red"
-                onClick={() => removeParticipant(name)}
-              >
-                削除
-              </Button>
-            </Flex>
+              name={name}
+              onRemove={() => removeParticipant(name)}
+            />
           ))}
         </Stack>
 
-        <HStack>
-          <Input
-            value={newName}
-            placeholder="参加者名"
-            onChange={(e) => setNewName(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") addParticipant();
-            }}
-          />
-          <Button colorPalette="blue" onClick={addParticipant}>
-            追加
-          </Button>
-        </HStack>
+        <ParticipantAdder onAdd={addParticipant} />
       </Box>
     </Stack>
   );

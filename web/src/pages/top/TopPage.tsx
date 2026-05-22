@@ -8,10 +8,10 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { api } from "../api/client";
-import type { ScheduleDTO, ScheduleInputDTO } from "../api/types";
-import { ScheduleEditRow } from "../components/ScheduleEditRow";
-import { ScheduleDraftRow } from "../components/ScheduleDraftRow";
+import { api } from "../../api/client";
+import type { ScheduleDTO, ScheduleInputDTO } from "../../api/types";
+import { ScheduleEditRow } from "./components/ScheduleEditRow";
+import { ScheduleDraftRow } from "./components/ScheduleDraftRow";
 
 const onError = (err: unknown) =>
   window.alert(err instanceof Error ? err.message : String(err));

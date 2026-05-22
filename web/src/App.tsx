@@ -1,8 +1,8 @@
 import { Box, Container } from "@chakra-ui/react";
 import { Route, Routes } from "react-router-dom";
-import { DetailPage } from "./pages/DetailPage";
-import { PastPage } from "./pages/PastPage";
-import { TopPage } from "./pages/TopPage";
+import { DetailPage } from "./pages/detail/DetailPage";
+import { PastPage } from "./pages/past/PastPage";
+import { TopPage } from "./pages/top/TopPage";
 
 export const App = () => (
   <Box minH="100vh" bg="gray.50" py={6}>

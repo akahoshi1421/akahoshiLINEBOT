@@ -1,5 +1,4 @@
 import {
-  Button,
   Flex,
   Heading,
   Link as ChakraLink,
@@ -9,9 +8,9 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { api } from "../api/client";
-import type { ScheduleDTO } from "../api/types";
-import { formatForDisplay } from "../utils/date";
+import { api } from "../../api/client";
+import type { ScheduleDTO } from "../../api/types";
+import { PastScheduleRow } from "./components/PastScheduleRow";
 
 const onError = (err: unknown) =>
   window.alert(err instanceof Error ? err.message : String(err));
@@ -53,21 +52,11 @@ export const PastPage = () => {
           </Table.Header>
           <Table.Body>
             {schedules.map((schedule) => (
-              <Table.Row key={schedule.id}>
-                <Table.Cell>
-                  <Button
-                    variant="plain"
-                    color="blue.600"
-                    p={0}
-                    h="auto"
-                    onClick={() => navigate(`/${schedule.id}`)}
-                  >
-                    {schedule.eventName}
-                  </Button>
-                </Table.Cell>
-                <Table.Cell>{formatForDisplay(schedule.eventDate)}</Table.Cell>
-                <Table.Cell>{schedule.remarks}</Table.Cell>
-              </Table.Row>
+              <PastScheduleRow
+                key={schedule.id}
+                schedule={schedule}
+                onOpen={() => navigate(`/${schedule.id}`)}
+              />
             ))}
           </Table.Body>
         </Table.Root>
