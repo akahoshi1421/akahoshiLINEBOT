@@ -5,7 +5,7 @@ import { SheetController } from "./sheetController";
 export const doGetAndSendSchedules = () => {
   const schedules = SheetController.getAllFutureScheduleData();
   const schedulesAll: NotifySchedule[] = schedules.map((schedule) => {
-    const participants = SheetController.getParticipants(schedule.eventName);
+    const participants = SheetController.getParticipants(schedule.id);
     return { schedule, participants };
   });
 

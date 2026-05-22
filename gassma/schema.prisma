@@ -5,7 +5,8 @@ generator client {
 
 /// スケジュール一覧シート
 model Schedule {
-  eventName    String        @id @map("イベント名")
+  id           Int           @id @default(autoincrement())
+  eventName    String        @map("イベント名")
   eventDate    DateTime?     @map("集合時間")
   remarks      String?       @map("備考")
   participants Participant[]
@@ -15,10 +16,10 @@ model Schedule {
 
 /// 参加者シート（スケジュールに対して多）
 model Participant {
-  eventName String   @map("イベント名")
-  name      String   @map("参加者名")
-  schedule  Schedule @relation(fields: [eventName], references: [eventName], onDelete: Cascade)
+  scheduleId Int      @map("イベントid")
+  name       String   @map("参加者名")
+  schedule   Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
 
-  @@id([eventName, name])
+  @@id([scheduleId, name])
   @@map("参加者")
 }

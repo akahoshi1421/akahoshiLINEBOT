@@ -24,13 +24,8 @@ export const doNewScheduleValidation = (arrayData: string[][]) => {
 
     return false;
   }
-  const data = SheetController.getData(newShceduleSchemaData.eventName);
 
-  if (data.schedule) {
-    sendMessageController.sendErrorMessage(["そのイベント名は登録済みです"]);
-    return false;
-  }
-
+  // id を主キーとしたため同名イベントの重複登録を許可する
   SheetController.addSchedule(newShceduleSchemaData);
 
   sendMessageController.newMessage(newShceduleSchemaData);
