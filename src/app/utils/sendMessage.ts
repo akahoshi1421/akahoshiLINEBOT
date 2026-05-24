@@ -23,6 +23,20 @@ export class SendMessageController {
     };
   }
 
+  // 単一テキストをグループへ push する
+  public pushMessage(text: string) {
+    const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
+      method: "post",
+      headers: this.getHeaders(),
+      payload: JSON.stringify({
+        to: this.groupId,
+        messages: [{ type: "text", text }],
+      }),
+    };
+
+    UrlFetchApp.fetch(this.LINE_URL, options);
+  }
+
   public notifyScheduleMessage(
     twoWeeksSchedulesAll: NotifySchedule[],
     oneWeekSchedulesAll: NotifySchedule[],
