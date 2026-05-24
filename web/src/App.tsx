@@ -6,7 +6,7 @@ import { TopPage } from "./pages/top/TopPage";
 
 export const App = () => (
   <Box minH="100vh" bg="gray.50" py={6}>
-    <Container maxW="4xl" overflowX="scroll">
+    <Container maxW="4xl" overflowX="scroll" scrollbar="hidden">
       <Routes>
         <Route path="/" element={<TopPage />} />
         <Route path="/past" element={<PastPage />} />
