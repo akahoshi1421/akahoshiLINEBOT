@@ -1,16 +1,10 @@
-import type { ScheduleRecord } from "../types/gassma";
-import type { NewSchedule } from "../types/schema";
-import { NotifySchedule } from "../types/lineMessageData";
+import type { NotifySchedule } from "../types/lineMessageData";
 import { getOneNotifyScheduleMessage } from "./getOneNotifyScheduleMessage";
-import { MessageCreate } from "./messageCreate";
-import { getAllInOneNotifyScheduleMessage } from "./getAllInOneNotifyScheduleMessage";
-import { getRemovedIfLastLineBreak } from "./getRemovedIfLastLineBreak";
 
 export class SendMessageController {
   private readonly LINE_URL: string;
   private readonly accessToken: string;
   private readonly groupId: string;
-  private readonly messageCreate: MessageCreate;
 
   constructor() {
     this.LINE_URL = "https://api.line.me/v2/bot/message/push";
@@ -20,7 +14,6 @@ export class SendMessageController {
       ) || "";
     this.groupId =
       PropertiesService.getScriptProperties().getProperty("GROUP_ID") || "";
-    this.messageCreate = new MessageCreate();
   }
 
   private getHeaders() {
@@ -28,138 +21,6 @@ export class SendMessageController {
       "Content-Type": "application/json",
       Authorization: "Bearer " + this.accessToken,
     };
-  }
-
-  public sendErrorMessage(messages: string[]) {
-    const headers = this.getHeaders();
-
-    const postData = {
-      to: this.groupId,
-      messages: [{ type: "text", text: messages.join("\n") }],
-    };
-
-    const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
-      method: "post",
-      headers: headers,
-      payload: JSON.stringify(postData),
-    };
-
-    UrlFetchApp.fetch(this.LINE_URL, options);
-  }
-
-  public newMessage(data: NewSchedule) {
-    const { eventName, eventDate, remarks, participants } = data;
-
-    const message = `以下のスケジュールを作成しました。
-
-${this.messageCreate.getEventNameMessage(
-  eventName
-)}${this.messageCreate.getDateMessage(
-      eventDate
-    )}${this.messageCreate.getParticipantsStringMessage(
-      participants
-    )}${this.messageCreate.getRemakrsMessage(remarks)}`;
-
-    const removedLastLineBreakMessage = getRemovedIfLastLineBreak(message);
-
-    const headers = this.getHeaders();
-
-    const postData = {
-      to: this.groupId,
-      messages: [{ type: "text", text: removedLastLineBreakMessage }],
-    };
-
-    const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
-      method: "post",
-      headers: headers,
-      payload: JSON.stringify(postData),
-    };
-
-    UrlFetchApp.fetch(this.LINE_URL, options);
-  }
-
-  public changeMessage(
-    preSchedule: ScheduleRecord,
-    preParticipants: string[],
-    schedule: ScheduleRecord,
-    participants: string[]
-  ) {
-    const {
-      eventName: preEventName,
-      eventDate: preEventDate,
-      remarks: preRemarks,
-    } = preSchedule;
-
-    const { eventName, eventDate, remarks } = schedule;
-
-    const message = `以下のスケジュールを変更しました。
-
-変更前:
-${this.messageCreate.getEventNameMessage(
-  preEventName
-)}${this.messageCreate.getDateMessage(
-      preEventDate
-    )}${this.messageCreate.getParticipantsMessage(
-      preParticipants
-    )}${this.messageCreate.getRemakrsMessage(preRemarks)}
-↓↓↓
-
-変更後:
-${this.messageCreate.getEventNameMessage(
-  eventName
-)}${this.messageCreate.getDateMessage(
-      eventDate
-    )}${this.messageCreate.getParticipantsMessage(
-      participants
-    )}${this.messageCreate.getRemakrsMessage(remarks)}`;
-
-    const removedLastLineBreakMessage = getRemovedIfLastLineBreak(message);
-
-    const headers = this.getHeaders();
-
-    const postData = {
-      to: this.groupId,
-      messages: [{ type: "text", text: removedLastLineBreakMessage }],
-    };
-
-    const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
-      method: "post",
-      headers: headers,
-      payload: JSON.stringify(postData),
-    };
-
-    UrlFetchApp.fetch(this.LINE_URL, options);
-  }
-
-  public deleteMessage(schedule: ScheduleRecord, participants: string[]) {
-    const { eventName, eventDate, remarks } = schedule;
-
-    const message = `以下のスケジュールを削除しました。
-
-${this.messageCreate.getEventNameMessage(
-  eventName
-)}${this.messageCreate.getDateMessage(
-      eventDate
-    )}${this.messageCreate.getParticipantsMessage(
-      participants
-    )}${this.messageCreate.getRemakrsMessage(remarks)}`;
-
-    const removedLastLineBreakMessage = getRemovedIfLastLineBreak(message);
-
-    const headers = this.getHeaders();
-
-    const postData = {
-      to: this.groupId,
-      messages: [{ type: "text", text: removedLastLineBreakMessage }],
-    };
-
-    const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
-      method: "post",
-      headers: headers,
-      payload: JSON.stringify(postData),
-    };
-
-    UrlFetchApp.fetch(this.LINE_URL, options);
   }
 
   public notifyScheduleMessage(
@@ -198,26 +59,6 @@ ${this.messageCreate.getEventNameMessage(
     };
 
     if (postData.messages.length === 0) return;
-
-    const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
-      method: "post",
-      headers: headers,
-      payload: JSON.stringify(postData),
-    };
-
-    UrlFetchApp.fetch(this.LINE_URL, options);
-  }
-
-  public notifySchedules(schedules: NotifySchedule[]) {
-    const message = getAllInOneNotifyScheduleMessage(schedules);
-    const removedLastLineBreakMessage = getRemovedIfLastLineBreak(message);
-
-    const headers = this.getHeaders();
-
-    const postData = {
-      to: this.groupId,
-      messages: [{ type: "text", text: removedLastLineBreakMessage }],
-    };
 
     const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
       method: "post",
