@@ -1,4 +1,5 @@
 import { notify } from "./app/notify";
+import { doPost } from "./app/server/lineWebhook";
 import {
   apiAddParticipant,
   apiCreateSchedule,
@@ -15,9 +16,10 @@ declare const global: {
   [x: string]: unknown;
 };
 
-// Web アプリ配信 + LINE 定期通知
+// Web アプリ配信 + LINE 定期通知 + LINE Webhook(「BOT」で Web アプリ URL を返信)
 global.doGet = doGet;
 global.notify = notify;
+global.doPost = doPost;
 
 // google.script.run から呼ぶ API
 global.apiGetFutureSchedules = apiGetFutureSchedules;
