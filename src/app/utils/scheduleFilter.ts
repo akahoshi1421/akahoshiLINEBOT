@@ -25,10 +25,10 @@ export const getScheduleFilter = (
   const dateOnly = new Date(Utilities.formatDate(now, "JST", "yyyy-MM-dd"));
 
   const result = allScheudlesData.filter((schedule) => {
-    if (!schedule.集合時間) return false;
+    if (!schedule.eventDate) return false;
 
     const dateOnlyTheSchedule = new Date(
-      Utilities.formatDate(schedule.集合時間, "JST", "yyyy-MM-dd")
+      Utilities.formatDate(schedule.eventDate, "JST", "yyyy-MM-dd")
     );
 
     return (
