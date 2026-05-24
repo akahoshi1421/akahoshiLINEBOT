@@ -10,6 +10,7 @@ export const ScheduleDraftRow = () => {
     <Table.Row bg="blue.50">
       <Table.Cell>
         <Input
+          minW="140px"
           value={draft.eventName}
           placeholder="＋ 新規追加"
           onChange={(e) => update({ eventName: e.target.value })}
@@ -17,6 +18,7 @@ export const ScheduleDraftRow = () => {
       </Table.Cell>
       <Table.Cell>
         <Input
+          minW="140px"
           type="datetime-local"
           value={draft.eventDate}
           onChange={(e) => update({ eventDate: e.target.value })}
@@ -24,6 +26,7 @@ export const ScheduleDraftRow = () => {
       </Table.Cell>
       <Table.Cell>
         <Input
+          minW="140px"
           value={draft.remarks}
           placeholder="備考"
           onChange={(e) => update({ remarks: e.target.value })}

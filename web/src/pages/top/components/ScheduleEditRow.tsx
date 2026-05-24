@@ -27,6 +27,7 @@ export const ScheduleEditRow = ({ schedule }: Props) => {
     <Table.Row>
       <Table.Cell>
         <Input
+          minW="140px"
           value={eventName}
           placeholder="イベント名"
           onChange={(e) => setEventName(e.target.value)}
@@ -36,6 +37,7 @@ export const ScheduleEditRow = ({ schedule }: Props) => {
       </Table.Cell>
       <Table.Cell>
         <Input
+          minW="140px"
           type="datetime-local"
           value={eventDate}
           onChange={(e) => setEventDate(e.target.value)}
@@ -45,6 +47,7 @@ export const ScheduleEditRow = ({ schedule }: Props) => {
       </Table.Cell>
       <Table.Cell>
         <Input
+          minW="140px"
           value={remarks}
           placeholder="備考"
           onChange={(e) => setRemarks(e.target.value)}
